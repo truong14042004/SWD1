@@ -1,0 +1,7 @@
+.git
+.github
+docs/
+*.docx
+.env.example
+.env.local
+README.md

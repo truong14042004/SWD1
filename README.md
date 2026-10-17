@@ -1,7 +1,10 @@
 # DenimFlow BO — Hệ Thống Back Office May Quần Jean với Dynamic Workflow
 
 > **Phiên bản**: 2.0  
+> **Repository GitHub**: [https://github.com/truong14042004/SWD1](https://github.com/truong14042004/SWD1)  
 > **Tech Stack**: Frontend React (Next.js 14) + Tailwind CSS, Backend TypeScript, Database PostgreSQL (Prisma ORM), Deploy Vercel.
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Ftruong14042004%2FSWD1&env=DATABASE_URL&project-name=denimflow-bo)
 
 ---
 
