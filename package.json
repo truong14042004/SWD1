@@ -14,8 +14,10 @@
     "deploy:vercel": "vercel --prod"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "@prisma/client": "^5.22.0",
     "clsx": "^2.1.1",
+    "gsap": "^3.15.0",
     "lucide-react": "^0.468.0",
     "next": "14.2.24",
     "react": "^18.3.1",

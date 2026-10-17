@@ -1,10 +1,22 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { UserRole, ProductionOrder } from '@/types';
+import React, { useState, useEffect, useRef } from 'react';
+import { AuthProvider, useAuth } from '@/context/AuthContext';
+import { useGSAP } from '@gsap/react';
+import { animateFadeIn } from '@/lib/animations';
 import { Header } from '@/components/Header';
-import { Sidebar, TabType } from '@/components/Sidebar';
-import { DashboardTab } from '@/components/tabs/DashboardTab';
+import { Sidebar, MainViewType } from '@/components/Sidebar';
+
+// Dedicated Role Workspaces
+import { AdminView } from '@/components/roles/AdminView';
+import { ProcessEngineerView } from '@/components/roles/ProcessEngineerView';
+import { ProductionPlannerView } from '@/components/roles/ProductionPlannerView';
+import { WarehouseKeeperView } from '@/components/roles/WarehouseKeeperView';
+import { StationOperatorView } from '@/components/roles/StationOperatorView';
+import { QCInspectorView } from '@/components/roles/QCInspectorView';
+import { ManagerView } from '@/components/roles/ManagerView';
+
+// Standard Tabs
 import { OrdersTab } from '@/components/tabs/OrdersTab';
 import { WorkflowTab } from '@/components/tabs/WorkflowTab';
 import { WorklistTab } from '@/components/tabs/WorklistTab';
@@ -12,15 +24,16 @@ import { QcTab } from '@/components/tabs/QcTab';
 import { InventoryTab } from '@/components/tabs/InventoryTab';
 import { AuditTab } from '@/components/tabs/AuditTab';
 
-export default function HomePage() {
-  const [activeTab, setActiveTab] = useState<TabType>('dashboard');
-  const [currentRole, setCurrentRole] = useState<UserRole>('PRODUCTION_PLANNER');
-
-  const [orders, setOrders] = useState<ProductionOrder[]>([]);
+function AppContent() {
+  const { currentUser, isAuthenticated } = useAuth();
+  const [activeView, setActiveView] = useState<MainViewType>('role-workspace');
+  const [orders, setOrders] = useState<any[]>([]);
   const [catalog, setCatalog] = useState<any>(null);
   const [workflowData, setWorkflowData] = useState<any>(null);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const mainContentRef = useRef<HTMLDivElement>(null);
 
   const fetchData = async () => {
     try {
@@ -46,66 +59,115 @@ export default function HomePage() {
     fetchData();
   }, []);
 
-  // Compute ready tasks for sidebar badge
-  const readyTaskCount = orders.reduce((sum, order: any) => {
-    const readySteps = order.workflowInstance?.stepInstances?.filter(
-      (s: any) => s.status === 'READY' || s.status === 'IN_PROGRESS'
-    ) || [];
-    return sum + readySteps.length;
-  }, 0);
+  // GSAP animation when switching views or roles
+  useGSAP(
+    () => {
+      if (mainContentRef.current) {
+        animateFadeIn(mainContentRef.current);
+      }
+    },
+    { scope: mainContentRef, dependencies: [activeView, currentUser?.role] }
+  );
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
-      <Header currentRole={currentRole} onRoleChange={setCurrentRole} />
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+      <Header />
 
       <div className="flex flex-1">
         <Sidebar
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
+          activeView={activeView}
+          onViewChange={setActiveView}
           orderCount={orders.length}
-          readyTaskCount={readyTaskCount}
         />
 
         <main className="flex-1 p-6 max-w-7xl mx-auto w-full">
           {loading ? (
-            <div className="flex items-center justify-center h-64 text-slate-400 text-sm">
+            <div className="flex items-center justify-center h-64 text-slate-400 text-xs font-semibold">
+              <span className="w-4 h-4 border-2 border-denim-600 border-t-transparent rounded-full animate-spin mr-2"></span>
               Đang tải dữ liệu DenimFlow BO...
             </div>
           ) : (
-            <>
-              {activeTab === 'dashboard' && (
-                <DashboardTab orders={orders} onSelectTab={setActiveTab} />
+            <div ref={mainContentRef}>
+              {/* PRIMARY ROLE WORKSPACE */}
+              {activeView === 'role-workspace' && (
+                <>
+                  {currentUser?.role === 'ADMIN' && (
+                    <AdminView catalog={catalog} auditLogs={auditLogs} onRefresh={fetchData} />
+                  )}
+                  {currentUser?.role === 'PROCESS_ENGINEER' && (
+                    <ProcessEngineerView
+                      workflowData={workflowData}
+                      catalog={catalog}
+                      onRefresh={fetchData}
+                    />
+                  )}
+                  {currentUser?.role === 'PRODUCTION_PLANNER' && (
+                    <ProductionPlannerView
+                      orders={orders}
+                      catalog={catalog}
+                      onRefresh={fetchData}
+                    />
+                  )}
+                  {currentUser?.role === 'WAREHOUSE_KEEPER' && (
+                    <WarehouseKeeperView
+                      catalog={catalog}
+                      orders={orders}
+                      onRefresh={fetchData}
+                    />
+                  )}
+                  {currentUser?.role === 'STATION_OPERATOR' && (
+                    <StationOperatorView orders={orders} onRefresh={fetchData} />
+                  )}
+                  {currentUser?.role === 'QC_INSPECTOR' && (
+                    <QCInspectorView
+                      orders={orders}
+                      catalog={catalog}
+                      onRefresh={fetchData}
+                    />
+                  )}
+                  {currentUser?.role === 'MANAGER' && <ManagerView orders={orders} />}
+                </>
               )}
-              {activeTab === 'orders' && (
+
+              {/* GLOBAL SUB-VIEWS */}
+              {activeView === 'orders' && (
                 <OrdersTab
                   orders={orders}
                   catalog={catalog}
-                  currentRole={currentRole}
+                  currentRole={currentUser?.role || 'PRODUCTION_PLANNER'}
                   onRefresh={fetchData}
                 />
               )}
-              {activeTab === 'workflow' && <WorkflowTab workflowData={workflowData} />}
-              {activeTab === 'worklist' && (
+              {activeView === 'workflow' && <WorkflowTab workflowData={workflowData} />}
+              {activeView === 'worklist' && (
                 <WorklistTab
                   orders={orders}
-                  currentRole={currentRole}
+                  currentRole={currentUser?.role || 'STATION_OPERATOR'}
                   onRefresh={fetchData}
                 />
               )}
-              {activeTab === 'qc' && (
+              {activeView === 'qc' && (
                 <QcTab
                   orders={orders}
                   catalog={catalog}
-                  currentRole={currentRole}
+                  currentRole={currentUser?.role || 'QC_INSPECTOR'}
                   onRefresh={fetchData}
                 />
               )}
-              {activeTab === 'inventory' && <InventoryTab catalog={catalog} />}
-              {activeTab === 'audit' && <AuditTab auditLogs={auditLogs} />}
-            </>
+              {activeView === 'inventory' && <InventoryTab catalog={catalog} />}
+              {activeView === 'audit' && <AuditTab auditLogs={auditLogs} />}
+            </div>
           )}
         </main>
       </div>
     </div>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
