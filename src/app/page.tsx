@@ -137,7 +137,7 @@ function AppContent() {
           {loading ? (
             <div className="flex items-center justify-center h-64 text-slate-400 text-xs font-semibold">
               <span className="w-4 h-4 border-2 border-denim-600 border-t-transparent rounded-full animate-spin mr-2"></span>
-              Đang tải dữ liệu DenimFlow BO...
+              Đang tải dữ liệu DenimFlow...
             </div>
           ) : (
             <div ref={mainContentRef}>

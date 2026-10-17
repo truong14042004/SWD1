@@ -49,7 +49,7 @@ export class PredecessorGateHandler extends GateHandler {
         return {
           passed: false,
           gateName: 'PredecessorGate',
-          message: `Công đoạn tiền nhiệm "${predStep.name}" (${predStep.stepCode}) chưa hoàn thành (trạng thái: ${predStep.status}).`,
+          message: `Công đoạn trước "${predStep.name}" chưa hoàn thành xong (vui lòng chờ xưởng trước bàn giao).`,
         };
       }
     }
@@ -59,7 +59,7 @@ export class PredecessorGateHandler extends GateHandler {
 }
 
 /**
- * Gate 2: Material Allocation Check before CUTTING (BR-06)
+ * Gate 2: Material Allocation Check before CUTTING
  */
 export class CuttingMaterialGateHandler extends GateHandler {
   public handle(context: GateContext): GateResult {
@@ -76,7 +76,7 @@ export class CuttingMaterialGateHandler extends GateHandler {
           return {
             passed: false,
             gateName: 'CuttingMaterialGate',
-            message: `BR-06: Không thể bắt đầu Cắt! Vải chưa được cấp đủ theo BOM (Cần: ${fabricBom.requiredQty}m, Đã giữ: ${totalAllocated}m).`,
+            message: `Không thể bắt đầu Cắt! Vải chưa được xuất đủ theo định mức (Cần: ${fabricBom.requiredQty}m, Đã xuất: ${totalAllocated}m). Vui lòng yêu cầu Thủ Kho xuất đủ vải.`,
           };
         }
       }
@@ -87,7 +87,7 @@ export class CuttingMaterialGateHandler extends GateHandler {
 }
 
 /**
- * Gate 3: Evidence Requirement Check (BR-15)
+ * Gate 3: Evidence Requirement Check
  */
 export class EvidenceGateHandler extends GateHandler {
   public handle(context: GateContext): GateResult {
@@ -97,7 +97,7 @@ export class EvidenceGateHandler extends GateHandler {
       return {
         passed: false,
         gateName: 'EvidenceGate',
-        message: `BR-15: Công đoạn "${currentStep.name}" bắt buộc đính kèm tối thiểu 01 minh chứng (ảnh/phiếu nghiệm thu).`,
+        message: `Công đoạn "${currentStep.name}" bắt buộc đính kèm tối thiểu 01 minh chứng ảnh chụp hoặc phiếu nghiệm thu thực tế.`,
       };
     }
 
@@ -106,7 +106,7 @@ export class EvidenceGateHandler extends GateHandler {
 }
 
 /**
- * Gate 4: Quantity Preservation Check (BR-08)
+ * Gate 4: Quantity Preservation Check
  */
 export class QuantityConservationGateHandler extends GateHandler {
   public handle(context: GateContext): GateResult {
@@ -117,7 +117,7 @@ export class QuantityConservationGateHandler extends GateHandler {
         return {
           passed: false,
           gateName: 'QuantityConservationGate',
-          message: `BR-08: Số lượng không hợp lệ! Tổng số đạt (${currentStep.qtyGood}) và số lỗi (${currentStep.qtyDefect}) vượt quá số lượng đầu vào (${currentStep.qtyIn}).`,
+          message: `Số lượng không hợp lệ! Tổng số đạt (${currentStep.qtyGood}) và số lỗi (${currentStep.qtyDefect}) vượt quá số lượng bàn giao (${currentStep.qtyIn}).`,
         };
       }
     }

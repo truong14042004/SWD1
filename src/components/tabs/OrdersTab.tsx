@@ -73,9 +73,9 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
     setErrorMessage(null);
     setSuccessMessage(null);
 
-    // BR-19: Validation for skip clean wash
+    // Validation for skip clean wash
     if (skipCleanWash && !ackFileUrl.trim()) {
-      setErrorMessage('BR-19: Khách hàng bỏ Giặt sạch bắt buộc phải đính kèm đường dẫn văn bản khách ký xác nhận!');
+      setErrorMessage('Khách hàng yêu cầu bỏ bước Giặt sạch bắt buộc phải đính kèm văn bản khách hàng ký xác nhận!');
       return;
     }
 
@@ -158,7 +158,7 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
         setErrorMessage(data.error);
         return;
       }
-      setSuccessMessage('Đã giữ chỗ và cấp phát vật tư thành công (BR-06)!');
+      setSuccessMessage('Đã giữ chỗ và cấp phát vật tư may thành công!');
       onRefresh();
     } catch (err: any) {
       setErrorMessage(err.message || 'Lỗi');
@@ -186,7 +186,7 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
         <div>
           <h2 className="text-xl font-bold text-slate-900">Danh Sách Đơn Hàng Gia Công Quần Jean</h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            Mỗi đơn chạy theo một Workflow Version xác định (BR-03), áp dụng Ma Trận Vải–Màu (BR-04) và QC Profile (BR-19).
+            Mỗi đơn chạy theo một quy trình kỹ thuật xác định, áp dụng bảng quy tắc phối màu và tiêu chuẩn chất lượng phù hợp.
           </p>
         </div>
 
@@ -206,13 +206,13 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase font-semibold">
                 <th className="py-3 px-4">Mã Đơn</th>
-                <th className="py-3 px-4">Style Quần</th>
-                <th className="py-3 px-4">Vải & Màu (BR-04)</th>
+                <th className="py-3 px-4">Kiểu Dáng (Style)</th>
+                <th className="py-3 px-4">Chất Liệu Vải & Màu</th>
                 <th className="py-3 px-4">Số Lượng</th>
                 <th className="py-3 px-4">Hạn Giao</th>
-                <th className="py-3 px-4">Quy Trình & QC Profile</th>
-                <th className="py-3 px-4">Thanh Toán (PayOS)</th>
-                <th className="py-3 px-4">Trạng Thái</th>
+                <th className="py-3 px-4">Quy Trình & Tiêu Chuẩn</th>
+                <th className="py-3 px-4">Tiền Cọc & Thanh Toán</th>
+                <th className="py-3 px-4">Tiến Độ</th>
                 <th className="py-3 px-4 text-right">Thao Tác</th>
               </tr>
             </thead>
@@ -223,6 +223,15 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
                 const color = catalog?.colors?.find((c: any) => c.id === order.colorId);
                 const totalQty = order.sizeLines.reduce((s, l) => s + l.plannedQty, 0);
 
+                const statusLabel =
+                  order.status === 'IN_PRODUCTION'
+                    ? 'Đang may gia công'
+                    : order.status === 'CONFIRMED'
+                    ? 'Đã duyệt sản xuất'
+                    : order.status === 'COMPLETED'
+                    ? 'Đã hoàn thành'
+                    : 'Đơn nháp (Chờ cọc)';
+
                 return (
                   <tr key={order.id} className="hover:bg-slate-50 transition">
                     <td className="py-3.5 px-4 font-bold text-slate-900">{order.orderNumber}</td>
@@ -231,18 +240,18 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
                       <div>{fabric?.code || order.fabricTypeId}</div>
                       <div className="text-slate-500 font-semibold">{color?.name || order.colorId}</div>
                     </td>
-                    <td className="py-3.5 px-4 font-semibold text-slate-800">{totalQty} pcs</td>
+                    <td className="py-3.5 px-4 font-semibold text-slate-800">{totalQty} chiếc</td>
                     <td className="py-3.5 px-4 text-xs text-slate-600">
                       {new Date(order.dueDate).toLocaleDateString('vi-VN')}
                     </td>
                     <td className="py-3.5 px-4 text-xs">
                       {order.skipCleanWash ? (
                         <span className="inline-block px-2 py-0.5 rounded font-semibold bg-purple-100 text-purple-800">
-                          Profile: SKIP_CLEAN_WASH (BR-19)
+                          Bỏ giặt sạch (Theo thỏa thuận)
                         </span>
                       ) : (
                         <span className="inline-block px-2 py-0.5 rounded font-semibold bg-blue-100 text-blue-800">
-                          Profile: FULL_PROCESS
+                          Quy trình tiêu chuẩn
                         </span>
                       )}
                     </td>
@@ -255,7 +264,7 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
                       ) : order.paymentStatus === 'FULLY_PAID' ? (
                         <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full font-bold text-xs bg-teal-100 text-teal-800">
                           <CheckCircle2 className="w-3 h-3 text-teal-600" />
-                          <span>Đã tất toán 100%</span>
+                          <span>Đã quyết toán 100%</span>
                         </span>
                       ) : (
                         <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full font-bold text-xs bg-amber-100 text-amber-800">
@@ -276,7 +285,7 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
                             : 'bg-slate-100 text-slate-700'
                         }`}
                       >
-                        {order.status}
+                        {statusLabel}
                       </span>
                     </td>
                     <td className="py-3.5 px-4 text-right space-x-1.5">
@@ -300,7 +309,7 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
                           className="text-xs bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-2.5 py-1 rounded font-semibold shadow-xs transition inline-flex items-center space-x-1"
                         >
                           <QrCode className="w-3 h-3" />
-                          <span>Cọc PayOS</span>
+                          <span>Thanh toán cọc</span>
                         </button>
                       )}
 
@@ -326,7 +335,7 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
                           onClick={() => handleConfirmOrder(order.id)}
                           className="text-xs bg-denim-600 hover:bg-denim-700 text-white px-2.5 py-1 rounded font-medium transition"
                         >
-                          Confirm
+                          Duyệt đơn
                         </button>
                       )}
                     </td>
@@ -344,13 +353,13 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
             <h3 className="text-lg font-bold text-slate-900 mb-1">Tiếp Nhận Đơn Hàng Gia Công Jean Mới</h3>
             <p className="text-xs text-slate-500 mb-4">
-              Hệ thống tự động lọc cặp Vải-Màu hợp lệ theo Ma Trận (BR-04) và áp dụng QC Profile phù hợp (BR-19).
+              Hệ thống tự động lọc cặp Vải-Màu hợp lệ theo bảng quy tắc và áp dụng tiêu chuẩn chất lượng phù hợp.
             </p>
 
             <form onSubmit={handleCreateOrder} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Style Quần Jean</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Mẫu Quần Jean (Style)</label>
                   <select
                     value={styleId}
                     onChange={(e) => setStyleId(e.target.value)}
@@ -382,7 +391,7 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Màu Sắc (Lọc theo Fabric–Color Matrix - BR-04)
+                  Màu Sắc (Lọc theo bảng quy tắc phối vải - màu)
                 </label>
                 <select
                   value={colorId}
@@ -393,7 +402,7 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
                     const isAllowed = allowedColorIds.includes(c.id);
                     return (
                       <option key={c.id} value={c.id} disabled={!isAllowed}>
-                        {c.name} {isAllowed ? '✓ (Hợp lệ)' : '✗ (Không tương thích theo BR-04)'}
+                        {c.name} {isAllowed ? '✓ (Cho phép may)' : '✗ (Không tương thích - Không nhận may)'}
                       </option>
                     );
                   })}
@@ -435,7 +444,7 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
                     onChange={(e) => setDyeRequired(e.target.checked)}
                     className="rounded text-denim-600 focus:ring-denim-500"
                   />
-                  <span>Yêu cầu Nhuộm Thành Phẩm (Dyeing Required)</span>
+                  <span>Yêu cầu Nhuộm Thành Phẩm</span>
                 </label>
 
                 <label className="flex items-center space-x-2 text-xs font-semibold text-slate-800 cursor-pointer">
@@ -445,7 +454,7 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
                     onChange={(e) => setIsCustom(e.target.checked)}
                     className="rounded text-denim-600 focus:ring-denim-500"
                   />
-                  <span>Đơn Custom Riêng (BR-17: Kích hoạt CUSTOM_REVIEW và bắt buộc duyệt mẫu PP_SAMPLE)</span>
+                  <span>Đơn Đặt Riêng (Kích hoạt thẩm định kỹ thuật và bắt buộc duyệt mẫu trước khi cắt)</span>
                 </label>
 
                 <label className="flex items-center space-x-2 text-xs font-semibold text-purple-900 cursor-pointer">
@@ -455,14 +464,14 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
                     onChange={(e) => setSkipCleanWash(e.target.checked)}
                     className="rounded text-purple-600 focus:ring-purple-500"
                   />
-                  <span>Khách yêu cầu BỎ GIẶT SẠCH để giảm giá thành (BR-18, BR-19)</span>
+                  <span>Khách yêu cầu BỎ QUA BƯỚC GIẶT SẠCH (Tiết kiệm chi phí — Quần Jean mộc)</span>
                 </label>
 
                 {skipCleanWash && (
                   <div className="p-4 bg-purple-50/80 border border-purple-200 rounded-2xl space-y-3 text-xs">
                     <FileUpload
-                      label="Ràng buộc BR-19: Tệp Văn Bản Khách Ký Xác Nhận (Waiver)"
-                      helperText="Do bỏ giặt sạch, sản phẩm chưa ổn định co rút. Bắt buộc tệp khách ký để áp dụng Profile SKIP_CLEAN_WASH."
+                      label="Biên Bản Khách Hàng Ký Xác Nhận (Thỏa Thuận Bỏ Giặt Sạch)"
+                      helperText="Do bỏ bước giặt sạch, sản phẩm chưa ổn định co rút. Bắt buộc đính kèm biên bản khách ký xác nhận chấp thuận."
                       accept=".pdf,.png,.jpg,.jpeg,.docx"
                       value={ackFileUrl}
                       onChange={(fileUrl) => setAckFileUrl(fileUrl)}
@@ -549,12 +558,12 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
               </button>
             </div>
 
-            {/* PayOS Financial & Deposit Card */}
+            {/* Financial & Deposit Card */}
             <div className="p-4 bg-gradient-to-r from-denim-50 to-indigo-50/50 border border-denim-200 rounded-2xl text-xs space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <CreditCard className="w-4 h-4 text-denim-600" />
-                  <span className="font-extrabold text-slate-900 text-sm">Cổng Thanh Toán PayOS (VietQR)</span>
+                  <span className="font-extrabold text-slate-900 text-sm">Tình Trạng Thanh Toán Đơn Hàng</span>
                 </div>
                 {selectedOrder.paymentStatus === 'DEPOSIT_PAID' ? (
                   <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs">
@@ -576,25 +585,25 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-white p-3 rounded-xl border border-denim-100">
                 <div>
-                  <div className="text-[10px] text-slate-400 font-bold uppercase">Tổng đơn hàng</div>
+                  <div className="text-[10px] text-slate-400 font-bold uppercase">Tổng giá trị đơn</div>
                   <div className="font-bold text-slate-800">
                     {(selectedOrder.totalAmount || 75000000).toLocaleString('vi-VN')} ₫
                   </div>
                 </div>
                 <div>
-                  <div className="text-[10px] text-slate-400 font-bold uppercase">Tiền cọc (50%)</div>
+                  <div className="text-[10px] text-slate-400 font-bold uppercase">Tiền cọc đợt 1 (50%)</div>
                   <div className="font-bold text-denim-600">
                     {(selectedOrder.depositAmount || 37500000).toLocaleString('vi-VN')} ₫
                   </div>
                 </div>
                 <div>
-                  <div className="text-[10px] text-slate-400 font-bold uppercase">Đã thanh toán</div>
+                  <div className="text-[10px] text-slate-400 font-bold uppercase">Đã nhận thanh toán</div>
                   <div className="font-bold text-emerald-600">
                     {(selectedOrder.paidAmount || 0).toLocaleString('vi-VN')} ₫
                   </div>
                 </div>
                 <div>
-                  <div className="text-[10px] text-slate-400 font-bold uppercase">Còn lại</div>
+                  <div className="text-[10px] text-slate-400 font-bold uppercase">Còn lại phải trả</div>
                   <div className="font-bold text-slate-700">
                     {Math.max(
                       0,
@@ -623,23 +632,23 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
                   <QrCode className="w-3.5 h-3.5" />
                   <span>
                     {selectedOrder.paymentStatus === 'DEPOSIT_PAID'
-                      ? 'Quyết toán 100% (PayOS)'
-                      : 'Mở VietQR Thanh Toán (PayOS)'}
+                      ? 'Thanh toán số tiền còn lại (100%)'
+                      : 'Quét mã VietQR chuyển tiền cọc'}
                   </span>
                 </button>
               </div>
             </div>
 
-            {/* BOM and Allocations */}
+            {/* Material Allocations */}
             <div>
-              <h4 className="text-xs font-bold text-slate-700 uppercase mb-2">Định Mức Vật Tư (BOM & Allocations - BR-06)</h4>
+              <h4 className="text-xs font-bold text-slate-700 uppercase mb-2">Kế Hoạch Cấp Phát Nguyên Phụ Liệu May</h4>
               <div className="border border-slate-200 rounded-lg overflow-hidden text-xs">
                 <table className="w-full text-left">
                   <thead className="bg-slate-50 border-b border-slate-200 font-semibold text-slate-600">
                     <tr>
                       <th className="p-2">Loại Vật Tư</th>
                       <th className="p-2">Định Mức Cần</th>
-                      <th className="p-2">Đã Giữ Chỗ (Allocated)</th>
+                      <th className="p-2">Đã Giữ Chỗ Trong Kho</th>
                       <th className="p-2 text-right">Thao Tác Thủ Kho</th>
                     </tr>
                   </thead>
@@ -672,7 +681,7 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
                                 }
                                 className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-xs font-medium"
                               >
-                                Cấp Vải từ Kho (BR-06)
+                                Xuất vải từ kho
                               </button>
                             )}
                           </td>
@@ -690,7 +699,7 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
                 <div className="flex items-center justify-between">
                   <div className="font-extrabold text-purple-900 flex items-center space-x-1.5">
                     <FileCheck className="w-4 h-4 text-purple-600" />
-                    <span>Văn Bản Khách Hàng Xác Nhận Bỏ Giặt Sạch (BR-19)</span>
+                    <span>Thỏa Thuận Khách Hàng Đồng Ý Miễn Trừ Độ Co Rút</span>
                   </div>
                   <button
                     type="button"
@@ -700,8 +709,8 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
                         fileUrl:
                           selectedOrder.acknowledgement?.fileUrl ||
                           '/docs/waiver-raw-denim-signed.pdf',
-                        fileName: `Waiver_${selectedOrder.orderNumber}_Signed.pdf`,
-                        title: `Văn Bản Khách Ký Xác Nhận Bỏ Giặt Sạch (BR-19) — Đơn ${selectedOrder.orderNumber}`,
+                        fileName: `Thoa_Thuan_Mien_Tru_Co_Rut_${selectedOrder.orderNumber}.pdf`,
+                        title: `Thỏa Thuận Khách Hàng Đồng Ý Miễn Trừ Độ Co Rút — Đơn ${selectedOrder.orderNumber}`,
                       })
                     }
                     className="px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold text-xs shadow-2xs transition flex items-center space-x-1"
@@ -711,7 +720,7 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
                   </button>
                 </div>
                 <div>Đại diện ký: <strong>{selectedOrder.acknowledgement.acknowledgedBy}</strong></div>
-                <div>Áp dụng Profile: <strong className="text-purple-700">SKIP_CLEAN_WASH (Ngưỡng co rút riêng)</strong></div>
+                <div>Tiêu chuẩn kiểm phẩm: <strong className="text-purple-700">Bỏ qua giặt sạch theo thỏa thuận</strong></div>
               </div>
             )}
           </div>
@@ -739,7 +748,7 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
         }
         onPaymentSuccess={() => {
           setSuccessMessage(
-            'Thanh toán PayOS thành công! Hệ thống đã ghi nhận tiền cọc, tự động xác nhận đơn và snapshot quy trình (BR-03).'
+            'Đã nhận tiền cọc thành công! Đơn hàng đã được duyệt và chuyển sang xưởng sản xuất.'
           );
           onRefresh();
         }}

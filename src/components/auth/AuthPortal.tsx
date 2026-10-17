@@ -41,13 +41,13 @@ const DEMO_ACCOUNTS: RoleAccountCard[] = [
     name: 'Nguyễn Văn Quản Trị',
     email: 'admin@denimflow.vn',
     passwordDefault: 'admin123',
-    title: 'Quản Trị Hệ Thống (System Admin)',
+    title: 'Quản Trị Nhà Máy',
     badge: { bg: 'bg-slate-100', text: 'text-slate-800', border: 'border-slate-300' },
     icon: Shield,
     responsibilities: [
-      'Cấu hình Ma Trận Vải–Màu (BR-04: chặn chọn sai cặp vải-màu)',
-      'Quản lý danh sách tài khoản & phân quyền 7 vai trò',
-      'Tra cứu toàn bộ Audit Log kiểm toán bất biến (BR-16)',
+      'Cấu hình bảng quy tắc vải và màu nhuộm tương thích',
+      'Quản lý danh sách nhân sự & phân quyền từng bộ phận',
+      'Tra cứu toàn bộ sổ nhật ký hoạt động sản xuất',
     ],
   },
   {
@@ -55,14 +55,14 @@ const DEMO_ACCOUNTS: RoleAccountCard[] = [
     name: 'Trần Kỹ Sư Quy Trình',
     email: 'pe@denimflow.vn',
     passwordDefault: 'pe123',
-    title: 'Kỹ Sư Quy Trình (Workflow Designer)',
+    title: 'Kỹ Sư Quy Trình May',
     badge: { bg: 'bg-purple-50', text: 'text-purple-800', border: 'border-purple-200' },
     icon: Workflow,
     responsibilities: [
-      'Thiết kế 14 công đoạn Dynamic Workflow & các nhánh điều kiện',
-      'Chạy kiểm định tính hợp lệ BR-01 & Publish Version mới (BR-02)',
-      'Cấu hình ngưỡng co rút / phai màu QC Profiles cho từng Style (BR-19)',
-      'Thẩm định & phê duyệt đơn hàng gia công Custom (BR-17)',
+      'Thiết kế chuỗi công đoạn may & phân nhánh kỹ thuật',
+      'Kiểm duyệt và ban hành quy trình may chuẩn áp dụng toàn xưởng',
+      'Cấu hình tiêu chuẩn co rút & độ bền màu cho từng mẫu mã',
+      'Thẩm định và phê duyệt đơn hàng đặt may theo yêu cầu riêng',
     ],
   },
   {
@@ -70,14 +70,14 @@ const DEMO_ACCOUNTS: RoleAccountCard[] = [
     name: 'Lê Kế Hoạch Sản Xuất',
     email: 'planner@denimflow.vn',
     passwordDefault: 'planner123',
-    title: 'Kế Hoạch Sản Xuất (Production Planner)',
+    title: 'Cán Bộ Kế Hoạch Sản Xuất',
     badge: { bg: 'bg-blue-50', text: 'text-blue-800', border: 'border-blue-200' },
     icon: ClipboardList,
     responsibilities: [
-      'Lập đơn hàng mới lọc theo Ma Trận Vải–Màu (BR-04)',
-      'Xác nhận đơn Confirm -> Chụp Snapshot Workflow Version (BR-03)',
-      'Đính kèm văn bản khách ký xác nhận khi bỏ Giặt Sạch (BR-18, BR-19)',
-      'Tính toán định mức BOM vải/phụ liệu và kích hoạt cấp vật tư',
+      'Lập đơn hàng mới theo quy tắc vải và màu chuẩn',
+      'Duyệt kế hoạch may và cố định quy trình sản xuất',
+      'Đính kèm biên bản thỏa thuận khi khách hàng yêu cầu bỏ giặt sạch',
+      'Tính toán định mức nguyên phụ liệu may và yêu cầu xuất kho',
     ],
   },
   {
@@ -85,13 +85,13 @@ const DEMO_ACCOUNTS: RoleAccountCard[] = [
     name: 'Phạm Thủ Kho Vải',
     email: 'warehouse@denimflow.vn',
     passwordDefault: 'warehouse123',
-    title: 'Thủ Kho Vải & Vật Tư (Warehouse Keeper)',
+    title: 'Thủ Kho Vải & Phụ Liệu',
     badge: { bg: 'bg-emerald-50', text: 'text-emerald-800', border: 'border-emerald-200' },
     icon: Package,
     responsibilities: [
-      'Quản lý tồn kho từng cuộn/lô vải (FabricLot) & kết quả thử co rút',
-      'Thực hiện Giữ chỗ và Cấp phát vải cho đơn hàng theo BOM (BR-06)',
-      'Mở khóa điều kiện Gatekeeper cho phép Tổ Cắt bắt đầu làm việc',
+      'Quản lý tồn kho từng cuộn vải & kết quả thử nghiệm co rút',
+      'Thực hiện giữ chỗ và xuất vải cho đơn hàng theo định mức',
+      'Xác nhận đủ vải để bàn giao cho tổ cắt bắt đầu sản xuất',
     ],
   },
   {
@@ -99,14 +99,14 @@ const DEMO_ACCOUNTS: RoleAccountCard[] = [
     name: 'Hoàng Tổ Trưởng May',
     email: 'operator@denimflow.vn',
     passwordDefault: 'operator123',
-    title: 'Tổ Trưởng Công Đoạn (Station Operator)',
+    title: 'Tổ Trưởng Chuyền May & Công Đoạn',
     badge: { bg: 'bg-amber-50', text: 'text-amber-800', border: 'border-amber-200' },
     icon: Scissors,
     responsibilities: [
-      'Shopfloor terminal cho 7 trạm: Cắt, May, Thêu, Nhuộm, Wash, Hoàn thiện, Đóng gói',
-      'Kiểm tra chốt chặn Gatekeeper tự động trước khi bấm Bắt đầu (BR-14)',
-      'Nghiệm thu kiểm tra Bảo toàn số lượng (BR-08: Số vào = Số đạt + Số lỗi)',
-      'Đính kèm tối thiểu 01 tệp minh chứng hình ảnh/phiếu (BR-15)',
+      'Bảng điều khiển cho 7 trạm: Cắt, May, Thêu, Nhuộm, Giặt, Hoàn thiện, Đóng gói',
+      'Kiểm tra điều kiện trước khi bắt đầu may từng bó hàng',
+      'Nghiệm thu kiểm đếm số lượng (Số nhận vào = Số đạt + Số lỗi)',
+      'Đính kèm ảnh chụp phiếu nghiệm thu chất lượng sản phẩm',
     ],
   },
   {
@@ -114,13 +114,13 @@ const DEMO_ACCOUNTS: RoleAccountCard[] = [
     name: 'Đặng Kiểm Định QC',
     email: 'qc@denimflow.vn',
     passwordDefault: 'qc123',
-    title: 'Kiểm Soát Chất Lượng (QC Inspector)',
+    title: 'Kiểm Soát Chất Lượng (KCS)',
     badge: { bg: 'bg-rose-50', text: 'text-rose-800', border: 'border-rose-200' },
     icon: CheckCircle2,
     responsibilities: [
-      'Kiểm tra theo đúng ngưỡng co rút & phai màu của QC Profile áp dụng (BR-19)',
-      'Đưa ra kết luận: Pass, Rework (chọn trạm sửa, tối đa 3 lần - BR-10) hoặc Reject',
-      'Tuân thủ nguyên tắc phân tách trách nhiệm không tự QC step mình làm (BR-11)',
+      'Kiểm tra theo đúng tiêu chuẩn độ co rút & độ bền màu của mã hàng',
+      'Đưa ra kết luận: Đạt chuẩn, Trả về sửa lại (tối đa 3 lần) hoặc Phế phẩm',
+      'Kiểm định độc lập, thợ may không tự kiểm tra sản phẩm do mình làm',
     ],
   },
   {
@@ -128,13 +128,13 @@ const DEMO_ACCOUNTS: RoleAccountCard[] = [
     name: 'Vũ Giám Đốc Xưởng',
     email: 'manager@denimflow.vn',
     passwordDefault: 'manager123',
-    title: 'Giám Đốc Xưởng (Factory Manager)',
+    title: 'Giám Đốc Xưởng May',
     badge: { bg: 'bg-indigo-50', text: 'text-indigo-800', border: 'border-indigo-200' },
     icon: TrendingUp,
     responsibilities: [
-      'Bảng điều khiển điều hành WIP thời gian thực toàn bộ các trạm gia công',
-      'Phát hiện điểm nghẽn chu kỳ sản xuất (Bottleneck detector)',
-      'Phân tích biểu đồ sản lượng, tỷ lệ đạt/lỗi và dự báo thời gian giao hàng',
+      'Theo dõi trực tiếp sản lượng đang may tại các chuyền sản xuất',
+      'Cảnh báo các công đoạn bị chậm chuyền, ứ đọng hàng',
+      'Thống kê sản lượng hàng ngày, tỷ lệ lỗi hỏng và tiến độ giao hàng',
     ],
   },
 ];
@@ -205,13 +205,13 @@ export const AuthPortal: React.FC = () => {
         <div className="text-center space-y-2">
           <div className="inline-flex items-center space-x-2.5 px-3 py-1 rounded-full bg-denim-50 border border-denim-200 text-denim-700 text-xs font-bold uppercase tracking-wider mb-2">
             <Layers className="w-4 h-4 text-denim-600" />
-            <span>DenimFlow BO — Dynamic Workflow Platform</span>
+            <span>DenimFlow — Nền Tảng Quản Lý Sản Xuất May Quần Jean</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-            Cổng Đăng Nhập & Phân Quyền 7 Vai Trò
+            Cổng Đăng Nhập & Phân Quyền 7 Bộ Phận
           </h1>
           <p className="text-sm text-slate-500 max-w-2xl mx-auto font-medium">
-            Hệ thống quản lý gia công may quần Jean theo vòng đời thực tế. Chọn tài khoản vai trò bên dưới để trải nghiệm ngay không gian làm việc chuyên biệt hoặc đăng nhập bằng tài khoản cá nhân.
+            Hệ thống quản lý gia công may quần Jean theo vòng đời thực tế. Chọn tài khoản bộ phận bên dưới để trải nghiệm ngay không gian làm việc chuyên biệt hoặc đăng nhập bằng tài khoản cá nhân.
           </p>
         </div>
 
@@ -228,10 +228,10 @@ export const AuthPortal: React.FC = () => {
             <div>
               <h2 className="text-base font-extrabold text-slate-900 flex items-center space-x-2">
                 <KeyRound className="w-5 h-5 text-denim-600" />
-                <span>Tài Khoản Đã Khởi Tạo Cho Từng Vai Trò (7 Roles)</span>
+                <span>Tài Khoản Mẫu Cho Từng Bộ Phận Trong Xưởng</span>
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
-                Bấm nút <strong>Đăng Nhập Vai Trò Này</strong> để lập tức truy cập giao diện chuyên biệt của vai trò tương ứng.
+                Bấm nút <strong>Đăng Nhập Vai Trò Này</strong> để lập tức truy cập giao diện chuyên biệt của vị trí tương ứng.
               </p>
             </div>
           </div>
@@ -398,19 +398,19 @@ export const AuthPortal: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Vai Trò Đảm Nhiệm (Role)</label>
+                <label className="block font-bold text-slate-700 mb-1">Bộ Phận / Vị Trí Đảm Nhiệm</label>
                 <select
                   value={regRole}
                   onChange={(e) => setRegRole(e.target.value as UserRole)}
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-denim-500 font-bold text-slate-800"
                 >
-                  <option value="PRODUCTION_PLANNER">Production Planner (Kế hoạch sản xuất)</option>
-                  <option value="PROCESS_ENGINEER">Process Engineer (Kỹ sư quy trình)</option>
-                  <option value="STATION_OPERATOR">Station Operator (Tổ trưởng trạm)</option>
-                  <option value="QC_INSPECTOR">QC Inspector (Kiểm định chất lượng)</option>
-                  <option value="WAREHOUSE_KEEPER">Warehouse Keeper (Thủ kho)</option>
-                  <option value="MANAGER">Factory Manager (Giám đốc xưởng)</option>
-                  <option value="ADMIN">System Admin (Quản trị hệ thống)</option>
+                  <option value="PRODUCTION_PLANNER">Kế hoạch sản xuất</option>
+                  <option value="PROCESS_ENGINEER">Kỹ sư quy trình may</option>
+                  <option value="STATION_OPERATOR">Tổ trưởng chuyền may / công đoạn</option>
+                  <option value="QC_INSPECTOR">Kiểm định chất lượng (KCS)</option>
+                  <option value="WAREHOUSE_KEEPER">Thủ kho vải & phụ liệu</option>
+                  <option value="MANAGER">Giám đốc xưởng may</option>
+                  <option value="ADMIN">Quản trị nhà máy</option>
                 </select>
               </div>
 
@@ -427,7 +427,7 @@ export const AuthPortal: React.FC = () => {
       </div>
 
       <footer className="text-center text-xs text-slate-400 py-4 mt-8">
-        DenimFlow BO v2.0 • Dynamic Workflow Jean Manufacturing Platform • Clean Architecture
+        DenimFlow • Nền Tảng Điều Hành Sản Xuất May Quần Jean Chuyên Nghiệp
       </footer>
     </div>
   );

@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'DenimFlow BO — Hệ Thống May Jean Dynamic Workflow',
-  description: 'Back Office gia công may quần Jean với Dynamic Workflow, PostgreSQL, Clean Architecture & RBAC',
+  title: 'DenimFlow — Hệ Thống Quản Lý Sản Xuất May Quần Jean',
+  description: 'Hệ thống điều hành sản xuất và gia công may quần Jean chuyên nghiệp cho nhà máy và xưởng may',
 };
 
 export default function RootLayout({

@@ -101,15 +101,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
         return {
           roleTitle: 'Quản Trị Hệ Thống',
           roleIcon: Shield,
-          rulesBadge: 'BR-04, BR-16',
+          rulesBadge: 'Quản trị & Phân quyền',
           coreItems: [
-            { id: 'admin-matrix', label: 'Ma Trận Vải–Màu (BR-04)', icon: Grid, highlight: true },
-            { id: 'admin-users', label: 'Tài Khoản & 7 Vai Trò', icon: Users },
-            { id: 'audit', label: 'Nhật Ký Audit Log (BR-16)', icon: FileText },
+            { id: 'admin-matrix', label: 'Quy Tắc Phối Vải & Màu', icon: Grid, highlight: true },
+            { id: 'admin-users', label: 'Quản Lý Người Dùng & Vai Trò', icon: Users },
+            { id: 'audit', label: 'Nhật Ký Hoạt Động Xưởng', icon: FileText },
           ],
           lookupItems: [
             { id: 'orders', label: 'Toàn Bộ Đơn Hàng', icon: ClipboardList, badge: orderCount },
-            { id: 'workflow', label: 'Sơ Đồ Dynamic Workflow', icon: Workflow },
+            { id: 'workflow', label: 'Sơ Đồ Quy Trình Sản Xuất', icon: Workflow },
           ],
         };
 
@@ -117,15 +117,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
         return {
           roleTitle: 'Kỹ Sư Quy Trình',
           roleIcon: Workflow,
-          rulesBadge: 'BR-01, BR-02, BR-19',
+          rulesBadge: 'Quy trình & Tiêu chuẩn',
           coreItems: [
-            { id: 'pe-designer', label: 'Soạn Thảo 14 Công Đoạn', icon: Workflow, highlight: true },
-            { id: 'pe-qc-profiles', label: 'Hồ Sơ Co Rút QC (BR-19)', icon: Sliders },
-            { id: 'pe-custom-review', label: 'Thẩm Định Đơn Custom (BR-17)', icon: FileCheck },
+            { id: 'pe-designer', label: 'Thiết Kế 14 Công Đoạn May', icon: Workflow, highlight: true },
+            { id: 'pe-qc-profiles', label: 'Tiêu Chuẩn Co Rút & Kiểm Phẩm', icon: Sliders },
+            { id: 'pe-custom-review', label: 'Thẩm Định Đơn May Mẫu Riêng', icon: FileCheck },
           ],
           lookupItems: [
-            { id: 'workflow', label: 'Xem Graph Workflow', icon: Layers },
-            { id: 'orders', label: 'Đơn Hàng Áp Dụng', icon: ClipboardList, badge: orderCount },
+            { id: 'workflow', label: 'Xem Lưu Đồ Sản Xuất', icon: Layers },
+            { id: 'orders', label: 'Đơn Hàng Đang Áp Dụng', icon: ClipboardList, badge: orderCount },
           ],
         };
 
@@ -133,15 +133,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
         return {
           roleTitle: 'Kế Hoạch Sản Xuất',
           roleIcon: ClipboardList,
-          rulesBadge: 'BR-03, BR-04, BR-18',
+          rulesBadge: 'Kế hoạch & Tiến độ',
           coreItems: [
-            { id: 'planner-pipeline', label: 'Tiến Độ & Pipeline Đơn', icon: ClipboardList, highlight: true },
-            { id: 'planner-create', label: 'Lập Đơn Mới (Guard BR-04)', icon: Sparkles },
-            { id: 'planner-bom', label: 'Bóc Tách Định Mức BOM', icon: Layers },
+            { id: 'planner-pipeline', label: 'Tiến Độ Các Đơn Hàng', icon: ClipboardList, highlight: true },
+            { id: 'planner-create', label: 'Tiếp Nhận Đơn Hàng Mới', icon: Sparkles },
+            { id: 'planner-bom', label: 'Bóc Tách Định Mức Vật Tư', icon: Layers },
           ],
           lookupItems: [
             { id: 'orders', label: 'Tất Cả Đơn Gia Công', icon: Box, badge: orderCount },
-            { id: 'workflow', label: 'Tham Chiếu 14 Công Đoạn', icon: Workflow },
+            { id: 'workflow', label: 'Quy Trình 14 Bước May Chuẩn', icon: Workflow },
           ],
         };
 
@@ -149,13 +149,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
         return {
           roleTitle: 'Thủ Kho Vải & Vật Tư',
           roleIcon: Package,
-          rulesBadge: 'BR-06, BR-12',
+          rulesBadge: 'Quản lý & Xuất kho',
           coreItems: [
-            { id: 'warehouse-allocation', label: 'Cấp Phát Vải Cắt (BR-06)', icon: Scissors, highlight: true },
-            { id: 'inventory', label: 'Tồn Kho Lô Vải (FabricLot)', icon: Package },
+            { id: 'warehouse-allocation', label: 'Xuất Cấp Vải Cho Xưởng Cắt', icon: Scissors, highlight: true },
+            { id: 'inventory', label: 'Tồn Kho Các Lô Vải', icon: Package },
           ],
           lookupItems: [
-            { id: 'orders', label: 'Đơn Chờ Cấp Vật Tư', icon: ClipboardList, badge: orderCount },
+            { id: 'orders', label: 'Đơn Hàng Chờ Cấp Vải', icon: ClipboardList, badge: orderCount },
           ],
         };
 
@@ -163,17 +163,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
         return {
           roleTitle: 'Tổ Trưởng Công Đoạn',
           roleIcon: Scissors,
-          rulesBadge: 'BR-14, BR-08, BR-15',
+          rulesBadge: 'May & Xử lý bó hàng',
           coreItems: [
-            { id: 'operator-terminal', label: 'Shopfloor Terminal 7 Trạm', icon: PlayCircle, highlight: true },
-            { id: 'worklist', label: 'Hàng Đợi Bó Hàng (My Tasks)', icon: Scissors },
-            { id: 'operator-cutting', label: 'Trạm Cắt (CUTTING)', icon: Scissors },
-            { id: 'operator-sewing', label: 'Chuyền May (SEWING)', icon: Shirt },
-            { id: 'operator-wash', label: 'Xưởng Wash & Giặt', icon: Flame },
+            { id: 'operator-terminal', label: 'Bảng Điều Khiển Xưởng May', icon: PlayCircle, highlight: true },
+            { id: 'worklist', label: 'Danh Sách Bó Hàng Chờ May', icon: Scissors },
+            { id: 'operator-cutting', label: 'Trạm Cắt Vải', icon: Scissors },
+            { id: 'operator-sewing', label: 'Chuyền May Lắp Ráp', icon: Shirt },
+            { id: 'operator-wash', label: 'Xưởng Giặt & Xử Lý Wash', icon: Flame },
             { id: 'operator-finishing', label: 'Hoàn Thiện & Đóng Gói', icon: Box },
           ],
           lookupItems: [
-            { id: 'workflow', label: 'Tiêu Chuẩn Chốt BR-14', icon: Workflow },
+            { id: 'workflow', label: 'Quy Chuẩn Kỹ Thuật May', icon: Workflow },
           ],
         };
 
@@ -181,14 +181,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
         return {
           roleTitle: 'Kiểm Định Chất Lượng',
           roleIcon: CheckCircle2,
-          rulesBadge: 'BR-19, BR-10, BR-11',
+          rulesBadge: 'Kiểm tra chất lượng',
           coreItems: [
-            { id: 'qc-dashboard', label: 'Bàn Nghiệm Thu QC (AQL)', icon: CheckCircle2, highlight: true },
-            { id: 'qc', label: 'Hàng Đợi Chờ Duyệt (Queue)', icon: FileCheck },
-            { id: 'qc-rework', label: 'Điều Phối Sửa Hàng Rework', icon: RotateCcw },
+            { id: 'qc-dashboard', label: 'Bàn Kiểm Nghiệm Thu Sản Phẩm', icon: CheckCircle2, highlight: true },
+            { id: 'qc', label: 'Hàng Đợi Chờ Kiểm Phẩm', icon: FileCheck },
+            { id: 'qc-rework', label: 'Điều Phối Hàng Sửa Chữa', icon: RotateCcw },
           ],
           lookupItems: [
-            { id: 'pe-qc-profiles', label: 'Ngưỡng Hồ Sơ QC (BR-19)', icon: Sliders },
+            { id: 'pe-qc-profiles', label: 'Tiêu Chuẩn Đo Độ Co Rút', icon: Sliders },
             { id: 'orders', label: 'Tra Cứu Đơn & Bó Hàng', icon: ClipboardList, badge: orderCount },
           ],
         };
@@ -197,15 +197,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
         return {
           roleTitle: 'Giám Đốc Xưởng',
           roleIcon: TrendingUp,
-          rulesBadge: 'BR-16 Realtime KPI',
+          rulesBadge: 'Điều hành & Năng suất',
           coreItems: [
-            { id: 'manager-wip', label: 'Giám Sát WIP Realtime', icon: TrendingUp, highlight: true },
-            { id: 'manager-bottleneck', label: 'Phát Hiện Điểm Nghẽn', icon: AlertTriangle },
-            { id: 'manager-analytics', label: 'Năng Suất & Tỷ Lệ Lỗi', icon: BarChart3 },
+            { id: 'manager-wip', label: 'Giám Sát Sản Lượng Đang May', icon: TrendingUp, highlight: true },
+            { id: 'manager-bottleneck', label: 'Cảnh Báo Chuyền Bị Ứ Đọng', icon: AlertTriangle },
+            { id: 'manager-analytics', label: 'Báo Cáo Năng Suất & Tỷ Lệ Đạt', icon: BarChart3 },
           ],
           lookupItems: [
             { id: 'orders', label: 'Tiến Độ Đơn Toàn Xưởng', icon: ClipboardList, badge: orderCount },
-            { id: 'audit', label: 'Nhật Ký Kiểm Toán BR-16', icon: FileText },
+            { id: 'audit', label: 'Nhật Ký Hoạt Động Xưởng', icon: FileText },
           ],
         };
     }
@@ -224,8 +224,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <span className="truncate">{config.roleTitle}</span>
           </div>
           <div className="mt-2 flex items-center justify-between text-[11px] pt-2 border-t border-slate-200/80">
-            <span className="text-slate-500 font-medium">Quy tắc phụ trách:</span>
-            <span className="font-mono font-bold text-denim-700 bg-white px-2 py-0.5 rounded-md border border-denim-200/60 text-[10px]">
+            <span className="text-slate-500 font-medium">Phạm vi phụ trách:</span>
+            <span className="font-semibold text-denim-700 bg-white px-2 py-0.5 rounded-md border border-denim-200/60 text-[10px]">
               {config.rulesBadge}
             </span>
           </div>
@@ -327,10 +327,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="bg-slate-50 rounded-2xl p-3 border border-slate-200/80 text-xs space-y-1.5">
         <div className="flex items-center space-x-1.5 font-bold text-slate-800">
           <Layers className="w-3.5 h-3.5 text-denim-600" />
-          <span>DenimFlow BO v2.0</span>
+          <span>DenimFlow v2.0</span>
         </div>
         <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
-          Phân quyền 7 vai trò chuẩn BR-11 (Separation of Duties).
+          Phân định trách nhiệm rõ ràng giữa các bộ phận may và kiểm định chất lượng.
         </p>
       </div>
     </aside>

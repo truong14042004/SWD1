@@ -201,15 +201,15 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="font-extrabold text-base tracking-tight">Thanh Toán VietQR qua PayOS</span>
+                <span className="font-extrabold text-base tracking-tight">Thanh Toán Chuyển Khoản VietQR</span>
                 <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold border border-emerald-400/30 flex items-center space-x-1">
                   <ShieldCheck className="w-3 h-3" />
-                  <span>Cổng Thanh Toán Tự Động</span>
+                  <span>Xác nhận tự động 24/7</span>
                 </span>
               </div>
               <p className="text-xs text-denim-200 mt-0.5">
                 Đơn hàng: <strong className="text-white">{order.orderNumber}</strong> •{' '}
-                {stage === 'DEPOSIT' ? 'Mốc 1: Đặt cọc 50% kích hoạt sản xuất' : 'Mốc 2: Quyết toán 100% bàn giao'}
+                {stage === 'DEPOSIT' ? 'Mốc 1: Đặt cọc 50% để đưa vào xưởng may' : 'Mốc 2: Quyết toán 100% trước khi xuất hàng'}
               </p>
             </div>
           </div>
@@ -226,7 +226,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         {loading && (
           <div className="py-20 flex flex-col items-center justify-center space-y-3 text-slate-500">
             <RefreshCw className="w-8 h-8 animate-spin text-denim-600" />
-            <p className="text-sm font-medium">Đang khởi tạo liên kết thanh toán PayOS...</p>
+            <p className="text-sm font-medium">Đang tạo mã chuyển khoản VietQR...</p>
           </div>
         )}
 
@@ -248,11 +248,11 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             <div className="space-y-1">
               <div className="inline-flex items-center space-x-1 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200 mb-2">
                 <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Giao Dịch Đã Khớp Lệnh Thành Công</span>
+                <span>Đã Nhận Được Tiền Thành Công</span>
               </div>
-              <h3 className="text-2xl font-black text-slate-900">Thanh Toán Hoàn Tất!</h3>
+              <h3 className="text-2xl font-black text-slate-900">Xác Nhận Đã Chuyển Khoản!</h3>
               <p className="text-xs text-slate-500 max-w-md mx-auto">
-                Hệ thống PayOS đã ghi nhận khoản tiền{' '}
+                Xưởng may đã ghi nhận khoản tiền{' '}
                 <strong className="text-slate-900 font-bold">
                   {requiredAmount.toLocaleString('vi-VN')} ₫
                 </strong>{' '}
@@ -267,9 +267,9 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 <span className="font-bold text-slate-900">{order.orderNumber}</span>
               </div>
               <div className="flex justify-between pb-2 border-b border-slate-200">
-                <span className="text-slate-500">Mã giao dịch PayOS:</span>
+                <span className="text-slate-500">Mã giao dịch:</span>
                 <span className="font-mono font-bold text-denim-600">
-                  {paymentData?.orderCode || order.payosOrderCode || 'POS-2026-LIVE'}
+                  {paymentData?.orderCode || order.payosOrderCode || 'GD-2026-CHUYEN-KHOAN'}
                 </span>
               </div>
               <div className="flex justify-between pb-2 border-b border-slate-200">
@@ -279,8 +279,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Nghiệp vụ BR-03:</span>
-                <span className="font-bold text-purple-700">Snapshot Workflow & Kích hoạt</span>
+                <span className="text-slate-500">Tiến độ đơn:</span>
+                <span className="font-bold text-purple-700">Đã duyệt & Chuyển sang xưởng may</span>
               </div>
             </div>
 
@@ -290,7 +290,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 onClick={handleFinish}
                 className="w-full max-w-md mx-auto py-3 px-6 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm shadow-md shadow-emerald-600/30 transition flex items-center justify-center space-x-2"
               >
-                <span>Đóng & Cập Nhật Tiến Độ Đơn Hàng</span>
+                <span>Đóng & Tiếp Tục Theo Dõi Tiến Độ</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -309,13 +309,11 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 <div>
                   <div className="font-extrabold">
                     {paymentData.isConfigured
-                      ? 'Cổng PayOS Trực Tuyến Đang Hoạt Động'
-                      : 'Chế độ Demo / Thử nghiệm VietQR (Chưa cần API Key PayOS)'}
+                      ? 'Thanh toán trực tiếp qua mã VietQR ngân hàng'
+                      : 'Hỗ trợ quét mã chuyển khoản nhanh VietQR'}
                   </div>
                   <div className="text-[11px] text-amber-700">
-                    {paymentData.isConfigured
-                      ? 'Quét mã VietQR bằng ứng dụng ngân hàng bất kỳ để thanh toán thật.'
-                      : 'Bạn có thể quét QR thật hoặc bấm nút giả lập bên dưới để kích hoạt flow ngay.'}
+                    Mở app ngân hàng bất kỳ để quét mã, hoặc bấm nút thử nghiệm bên cạnh để duyệt đơn ngay lập tức.
                   </div>
                 </div>
               </div>
@@ -331,7 +329,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 ) : (
                   <Sparkles className="w-3.5 h-3.5" />
                 )}
-                <span>Giả lập Thanh toán Thành công</span>
+                <span>Thử nghiệm: Xác nhận đã nhận tiền</span>
               </button>
             </div>
 
@@ -355,7 +353,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={paymentData.qrCode}
-                    alt="PayOS VietQR"
+                    alt="VietQR"
                     className="w-full h-full object-contain"
                   />
                   {/* Scanning animation bar */}
@@ -363,7 +361,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 </div>
 
                 <div className="text-[11px] text-slate-500 leading-tight">
-                  Mở ứng dụng <strong>Ngân hàng</strong> hoặc ví <strong>VietQR</strong> để quét mã chuyển tiền nhanh
+                  Mở ứng dụng <strong>Ngân hàng</strong> trên điện thoại để quét mã chuyển tiền nhanh
                   24/7.
                 </div>
 
@@ -375,7 +373,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     rel="noreferrer"
                     className="w-full py-2 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-denim-700 transition flex items-center justify-center space-x-1.5 shadow-2xs"
                   >
-                    <span>Mở trang PayOS Checkout</span>
+                    <span>Mở trang thanh toán ngân hàng</span>
                     <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 )}
@@ -384,9 +382,9 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               {/* Right Column: Bank Account Details with Copy Buttons */}
               <div className="space-y-3 text-xs">
                 <div>
-                  <h4 className="font-extrabold text-slate-900 text-sm">Thông Tin Chuyển Khoản Thủ Công</h4>
+                  <h4 className="font-extrabold text-slate-900 text-sm">Thông Tin Tài Khoản Nhận Tiền</h4>
                   <p className="text-slate-500 text-[11px]">
-                    Hệ thống tự động kích hoạt tiến độ ngay khi nhận được đúng nội dung chuyển khoản.
+                    Xưởng may sẽ tự động nhận diện và chuyển đơn vào sản xuất ngay khi nhận đúng tiền và lời nhắn.
                   </p>
                 </div>
 
@@ -435,7 +433,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   <div className="p-3 bg-denim-50/70 rounded-xl border border-denim-200 flex items-center justify-between">
                     <div>
                       <div className="text-[10px] uppercase font-bold text-denim-700">
-                        {stage === 'DEPOSIT' ? 'Số tiền cọc (50%)' : 'Số tiền quyết toán (100%)'}
+                        {stage === 'DEPOSIT' ? 'Số tiền cọc đợt 1 (50%)' : 'Số tiền thanh toán còn lại (100%)'}
                       </div>
                       <div className="font-black text-denim-900 text-base">
                         {paymentData.amount.toLocaleString('vi-VN')} ₫
@@ -461,7 +459,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   <div className="p-3 bg-amber-50/80 rounded-xl border border-amber-300 flex items-center justify-between">
                     <div>
                       <div className="text-[10px] uppercase font-bold text-amber-800">
-                        Nội dung chuyển khoản (Bắt buộc)
+                        Lời nhắn chuyển tiền (Bắt buộc ghi đúng để tự động nhận diện)
                       </div>
                       <div className="font-mono font-black text-amber-950 text-sm">
                         {paymentData.description}
@@ -487,7 +485,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 <div className="pt-1 flex items-center justify-between text-[11px] text-slate-500">
                   <span className="flex items-center space-x-1">
                     <RefreshCw className="w-3 h-3 animate-spin text-denim-600" />
-                    <span>Đang lắng nghe thanh toán tự động...</span>
+                    <span>Đang chờ thông báo tiền về từ ngân hàng...</span>
                   </span>
                   <button
                     type="button"

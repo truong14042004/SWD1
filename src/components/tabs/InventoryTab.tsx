@@ -11,21 +11,21 @@ export const InventoryTab: React.FC<InventoryTabProps> = ({ catalog }) => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold text-slate-900">Quản Lý Kho Vải Denim Theo Lô & Phụ Liệu (Thủ Kho)</h2>
+        <h2 className="text-xl font-bold text-slate-900">Quản Lý Kho Vải Denim & Phụ Liệu May</h2>
         <p className="text-xs text-slate-500 mt-0.5">
-          Theo dõi tồn kho theo từng lô (`FabricLot`), mét vải khả dụng và độ co rút thực nghiệm.
+          Theo dõi tồn kho theo từng cuộn vải, số mét còn trong kho và tỷ lệ co rút sau thử nghiệm.
         </p>
       </div>
 
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="p-4 border-b border-slate-200 font-bold text-slate-800 text-sm">
-          Danh Sách Lô Vải Denim Tại Kho
+          Danh Sách Cuộn Vải Denim Tại Kho
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 text-slate-600 text-xs uppercase font-semibold border-b border-slate-200">
               <tr>
-                <th className="py-3 px-4">Số Lô (Lot No)</th>
+                <th className="py-3 px-4">Mã Cuộn / Số Lô Vải</th>
                 <th className="py-3 px-4">Loại Vải</th>
                 <th className="py-3 px-4">Màu Sắc</th>
                 <th className="py-3 px-4">Mét Khả Dụng</th>

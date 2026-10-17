@@ -192,23 +192,23 @@ class DatabaseStore {
     if (!rule || !rule.isAllowed) {
       return {
         success: false,
-        error: 'BR-04: Cặp Vải và Màu đã chọn không tương thích theo Ma Trận Vải–Màu (Fabric–Color Matrix)!',
+        error: 'Loại vải và màu nhuộm đã chọn không thể phối cùng nhau theo quy chuẩn kỹ thuật của xưởng may!',
       };
     }
 
-    // Determine QC Profile (BR-19)
+    // Determine QC Profile
     const profileType = data.skipCleanWash ? 'SKIP_CLEAN_WASH' : 'FULL_PROCESS';
     const qcProfile = this.qcProfiles.find(
       (qp) => qp.styleId === data.styleId && qp.profileType === profileType
     );
 
-    // BR-19: If skip clean wash, customer signed waiver is required
+    // If skip clean wash, customer signed waiver is required
     let acknowledgement: CustomerAcknowledgement | undefined;
     if (data.skipCleanWash) {
       if (!data.acknowledgementFileUrl) {
         return {
           success: false,
-          error: 'BR-19: Khách hàng bỏ Giặt sạch bắt buộc phải đính kèm văn bản khách ký xác nhận trước khi tiếp nhận đơn!',
+          error: 'Đơn hàng bỏ qua bước giặt sạch bắt buộc phải đính kèm biên bản thỏa thuận do khách hàng ký duyệt!',
         };
       }
       acknowledgement = {
@@ -291,7 +291,7 @@ class DatabaseStore {
     if (!version) {
       return {
         success: false,
-        error: 'BR-03: Không thể xác nhận đơn hàng vì Style chưa có phiên bản Workflow nào được PUBLISHED!',
+        error: 'Không thể duyệt đơn hàng vì kiểu dáng này chưa có quy trình may mẫu nào được phê duyệt áp dụng!',
       };
     }
 
@@ -462,7 +462,7 @@ class DatabaseStore {
     if (step.requiresEvidence && step.evidences.length === 0) {
       return {
         success: false,
-        error: `BR-15: Công đoạn ${step.name} bắt buộc phải có ít nhất 01 tệp minh chứng trước khi hoàn thành!`,
+        error: `Công đoạn ${step.name} bắt buộc phải có ít nhất 01 hình ảnh nghiệm thu chất lượng trước khi hoàn thành!`,
       };
     }
 
@@ -547,22 +547,22 @@ class DatabaseStore {
     const step = instance.stepInstances.find((s) => s.stepCode === data.stepCode);
     if (!step) return { success: false, error: 'Không tìm thấy công đoạn' };
 
-    // BR-11: Separation of Duties (Operator cannot QC their own step)
+    // Separation of Duties (Operator cannot QC their own step)
     if (step.assignedTo === data.inspectorId) {
       return {
         success: false,
-        error: 'BR-11: Phân tách nhiệm vụ! Người thực hiện công đoạn không được phép tự làm QC cho chính công đoạn của mình.',
+        error: 'Quy định kiểm phẩm: Thợ may không được phép tự nghiệm thu chất lượng cho chính công đoạn do mình làm!',
       };
     }
 
     if (data.result === 'PASS') {
       step.status = 'DONE';
     } else if (data.result === 'REWORK') {
-      // BR-10: Rework routing with maxRework check
+      // Rework routing with maxRework check
       if (step.reworkCount >= 3) {
         return {
           success: false,
-          error: 'BR-10: Công đoạn đã vượt quá số vòng Rework tối đa (3 lần)! Vui lòng chuyển Production Planner xử lý ngoại lệ.',
+          error: 'Sản phẩm đã phải sửa chữa lại quá 3 lần mà chưa đạt! Vui lòng chuyển cán bộ kế hoạch xử lý đặc biệt.',
         };
       }
       step.reworkCount += 1;
@@ -669,7 +669,7 @@ class DatabaseStore {
         entityId: order.id,
         action: 'DEPOSIT_PAID_VIA_PAYOS',
         oldValue: 'UNPAID',
-        newValue: `Đã cọc ${amount.toLocaleString('vi-VN')} VND qua VietQR PayOS (Mã GD: ${reference})`,
+        newValue: `Đã nhận tiền cọc ${amount.toLocaleString('vi-VN')} ₫ qua chuyển khoản VietQR (Mã giao dịch: ${reference})`,
         actorId,
         createdAt: new Date().toISOString(),
       });
@@ -683,7 +683,7 @@ class DatabaseStore {
         entityId: order.id,
         action: 'FINAL_SETTLEMENT_PAID_VIA_PAYOS',
         oldValue: 'DEPOSIT_PAID',
-        newValue: `Đã quyết toán toàn bộ ${amount.toLocaleString('vi-VN')} VND qua VietQR PayOS (Mã GD: ${reference})`,
+        newValue: `Đã nhận thanh toán toàn bộ ${amount.toLocaleString('vi-VN')} ₫ qua chuyển khoản VietQR (Mã giao dịch: ${reference})`,
         actorId,
         createdAt: new Date().toISOString(),
       });

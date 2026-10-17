@@ -126,9 +126,9 @@ export const WorklistTab: React.FC<WorklistTabProps> = ({ orders, currentRole, o
 
       {/* Header */}
       <div>
-        <h2 className="text-xl font-bold text-slate-900">Worklist Trạm Gia Công (Station Operator)</h2>
+        <h2 className="text-xl font-bold text-slate-900">Danh Sách Công Việc Tại Chuyền May</h2>
         <p className="text-xs text-slate-500 mt-0.5">
-          Tổ trưởng công đoạn nhận việc, thực hiện kiểm tra Gatekeeper (BR-14) và bảo toàn số lượng (BR-08).
+          Tổ trưởng nhận lệnh sản xuất, kiểm tra điều kiện vào chuyền và nghiệm thu số lượng bán thành phẩm.
         </p>
       </div>
 
@@ -194,7 +194,7 @@ export const WorklistTab: React.FC<WorklistTabProps> = ({ orders, currentRole, o
                 <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs">
                   <div className="text-slate-500">
                     {step.requiresEvidence && (
-                      <span className="text-purple-700 font-medium">Bắt buộc minh chứng (BR-15)</span>
+                      <span className="text-purple-700 font-medium">Yêu cầu ảnh chụp nghiệm thu</span>
                     )}
                   </div>
 
@@ -205,7 +205,7 @@ export const WorklistTab: React.FC<WorklistTabProps> = ({ orders, currentRole, o
                         className="bg-denim-600 hover:bg-denim-700 text-white font-semibold px-3 py-1.5 rounded-lg flex items-center space-x-1.5 shadow transition"
                       >
                         <Play className="w-3.5 h-3.5" />
-                        <span>Bắt đầu (Start)</span>
+                        <span>Bắt Đầu</span>
                       </button>
                     )}
 
@@ -225,7 +225,7 @@ export const WorklistTab: React.FC<WorklistTabProps> = ({ orders, currentRole, o
                         className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-1.5 rounded-lg flex items-center space-x-1.5 shadow transition"
                       >
                         <Check className="w-3.5 h-3.5" />
-                        <span>Hoàn thành (Complete)</span>
+                        <span>Nghiệm Thu Hoàn Thành</span>
                       </button>
                     )}
                   </div>
@@ -244,13 +244,13 @@ export const WorklistTab: React.FC<WorklistTabProps> = ({ orders, currentRole, o
               Nghiệm Thu Công Đoạn: {completeModalData.stepName}
             </h3>
             <p className="text-xs text-slate-500">
-              Nhập số lượng đạt và lỗi để kiểm tra bảo toàn số lượng (BR-08: Số vào = Số đạt + Số lỗi).
+              Kiểm đếm số lượng: Tổng số bàn giao ({completeModalData.qtyIn}) = Số đạt + Số lỗi.
             </p>
 
             <form onSubmit={handleCompleteStep} className="space-y-4 text-xs">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Số lượng Đạt (Good Qty)</label>
+                  <label className="block font-semibold text-slate-700 mb-1">Số Lượng Đạt Chuẩn</label>
                   <input
                     type="number"
                     min="0"
@@ -262,7 +262,7 @@ export const WorklistTab: React.FC<WorklistTabProps> = ({ orders, currentRole, o
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Số lượng Lỗi (Defect Qty)</label>
+                  <label className="block font-semibold text-slate-700 mb-1">Số Lượng Hỏng / Lỗi</label>
                   <input
                     type="number"
                     min="0"
@@ -276,10 +276,10 @@ export const WorklistTab: React.FC<WorklistTabProps> = ({ orders, currentRole, o
 
               {completeModalData.requiresEvidence && (
                 <div className="p-3 bg-purple-50 border border-purple-200 rounded-xl space-y-2">
-                  <div className="font-bold text-purple-900">Bắt buộc minh chứng (BR-15)</div>
+                  <div className="font-bold text-purple-900">Ảnh chụp hoặc phiếu nghiệm thu</div>
                   <input
                     type="text"
-                    placeholder="Đường dẫn ảnh/phiếu nghiệm thu (VD: /uploads/evidence/step-done.jpg)"
+                    placeholder="Ảnh chụp sản phẩm hoặc phiếu nghiệm thu..."
                     value={evidenceUrl}
                     onChange={(e) => setEvidenceUrl(e.target.value)}
                     className="w-full bg-white border border-purple-300 rounded p-1.5"
@@ -307,7 +307,7 @@ export const WorklistTab: React.FC<WorklistTabProps> = ({ orders, currentRole, o
                   type="submit"
                   className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold shadow"
                 >
-                  Xác Nhận Hoàn Thành
+                  Xác Nhận & Bàn Giao Chuyền Tiếp Theo
                 </button>
               </div>
             </form>

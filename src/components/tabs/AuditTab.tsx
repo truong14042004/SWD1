@@ -22,9 +22,9 @@ export const AuditTab: React.FC<AuditTabProps> = ({ auditLogs }) => {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Nhật Ký Kiểm Toán Bất Biến (Audit Log — BR-16)</h2>
+          <h2 className="text-xl font-bold text-slate-900">Sổ Nhật Ký Hoạt Động Xưởng May</h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            Lưu vết mọi hành động chuyển trạng thái đơn, thực hiện công đoạn, cấp phát vật tư và kết quả QC. Không thể chỉnh sửa hoặc xóa.
+            Lưu vết toàn bộ hoạt động duyệt đơn, may gia công, xuất vải và kiểm tra chất lượng. Dữ liệu được bảo toàn minh bạch.
           </p>
         </div>
 
@@ -32,7 +32,7 @@ export const AuditTab: React.FC<AuditTabProps> = ({ auditLogs }) => {
           <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
           <input
             type="text"
-            placeholder="Tìm theo entity, action, actor..."
+            placeholder="Tìm theo mã đơn, hành động, nhân sự..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-9 pr-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-denim-500"
@@ -47,8 +47,8 @@ export const AuditTab: React.FC<AuditTabProps> = ({ auditLogs }) => {
               <tr>
                 <th className="py-3 px-4">Thời Điểm</th>
                 <th className="py-3 px-4">Đối Tượng</th>
-                <th className="py-3 px-4">Mã Entity</th>
-                <th className="py-3 px-4">Hành Động (Action)</th>
+                <th className="py-3 px-4">Mã Hồ Sơ / Đơn Hàng</th>
+                <th className="py-3 px-4">Hoạt Động Thực Hiện</th>
                 <th className="py-3 px-4">Giá Trị Cũ</th>
                 <th className="py-3 px-4">Giá Trị Mới</th>
                 <th className="py-3 px-4">Người Thực Hiện</th>

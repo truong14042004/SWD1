@@ -66,9 +66,9 @@ export const QcTab: React.FC<QcTabProps> = ({ orders, catalog, currentRole, onRe
     <div className="space-y-6">
       {/* Title */}
       <div>
-        <h2 className="text-xl font-bold text-slate-900">Trạm Kiểm Định Chất Lượng QC (AQL & Co Rút)</h2>
+        <h2 className="text-xl font-bold text-slate-900">Kiểm Định Chất Lượng Sản Phẩm (Độ Co Rút & Phai Màu)</h2>
         <p className="text-xs text-slate-500 mt-0.5">
-          QC đánh giá theo QC Profile của đơn hàng (BR-19), kiểm soát vòng rework tối đa 3 lần (BR-10) và phân tách trách nhiệm (BR-11).
+          Kiểm tra theo đúng tiêu chuẩn chất lượng của từng mã hàng, giới hạn sửa lại tối đa 3 lần và đảm bảo kiểm định độc lập.
         </p>
       </div>
 
@@ -115,15 +115,15 @@ export const QcTab: React.FC<QcTabProps> = ({ orders, catalog, currentRole, onRe
                   onChange={(e) => setStepCode(e.target.value)}
                   className="w-full text-sm border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-denim-500"
                 >
-                  <option value="FINAL_QC">FINAL_QC (Kiểm Định Cuối Kỳ)</option>
-                  <option value="FABRIC_INSPECT">FABRIC_INSPECT (Kiểm Vải Đầu Vào)</option>
+                  <option value="FINAL_QC">Kiểm tra thành phẩm trước đóng thùng</option>
+                  <option value="FABRIC_INSPECT">Kiểm tra vải mộc nhập kho</option>
                 </select>
               </div>
             </div>
 
             {/* Threshold Measurements */}
             <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
-              <div className="font-bold text-slate-800">Thông Số Đo Lường Thực Tế (So với Profile)</div>
+              <div className="font-bold text-slate-800">Thông Số Đo Lường Thực Tế (So với Tiêu Chuẩn)</div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-slate-600 mb-1">Độ Co Rút Đo Được (%)</label>
@@ -155,7 +155,7 @@ export const QcTab: React.FC<QcTabProps> = ({ orders, catalog, currentRole, onRe
 
             {/* Decision */}
             <div>
-              <label className="block font-semibold text-slate-700 mb-1">Kết Luận Của QC Inspector</label>
+              <label className="block font-semibold text-slate-700 mb-1">Kết Luận Kiểm Định Chất Lượng</label>
               <div className="grid grid-cols-3 gap-3">
                 <button
                   type="button"
@@ -167,7 +167,7 @@ export const QcTab: React.FC<QcTabProps> = ({ orders, catalog, currentRole, onRe
                   }`}
                 >
                   <CheckCircle className="w-5 h-5 text-emerald-600" />
-                  <span>PASS (Đạt)</span>
+                  <span>ĐẠT CHUẨN</span>
                 </button>
 
                 <button
@@ -180,7 +180,7 @@ export const QcTab: React.FC<QcTabProps> = ({ orders, catalog, currentRole, onRe
                   }`}
                 >
                   <RotateCcw className="w-5 h-5 text-amber-600" />
-                  <span>REWORK (Làm Lại)</span>
+                  <span>SỬA LẠI</span>
                 </button>
 
                 <button
@@ -193,15 +193,15 @@ export const QcTab: React.FC<QcTabProps> = ({ orders, catalog, currentRole, onRe
                   }`}
                 >
                   <XCircle className="w-5 h-5 text-rose-600" />
-                  <span>REJECT (Hủy Lô)</span>
+                  <span>PHẾ PHẨM</span>
                 </button>
               </div>
             </div>
 
-            {/* Target Step for Rework (BR-10) */}
+            {/* Target Step for Rework */}
             {result === 'REWORK' && (
               <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl space-y-2">
-                <label className="block font-bold text-amber-900">Điều Hướng Quay Lại Công Đoạn (BR-10)</label>
+                <label className="block font-bold text-amber-900">Chuyển về công đoạn để sửa lại</label>
                 <select
                   value={targetStepCodeForRework}
                   onChange={(e) => setTargetStepCodeForRework(e.target.value)}
@@ -236,12 +236,12 @@ export const QcTab: React.FC<QcTabProps> = ({ orders, catalog, currentRole, onRe
 
         {/* Right: Active QC Profile Card */}
         <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
-          <h3 className="font-bold text-slate-900 text-base">QC Profile Áp Dụng (BR-19)</h3>
+          <h3 className="font-bold text-slate-900 text-base">Tiêu Chuẩn Chất Lượng Áp Dụng</h3>
 
           <div className="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-3 text-xs">
             <div>
-              <div className="text-slate-400 font-semibold uppercase">Profile Type</div>
-              <div className="text-sm font-bold text-slate-800 mt-0.5">{profileType}</div>
+              <div className="text-slate-400 font-semibold uppercase">Tên Tiêu Chuẩn</div>
+              <div className="text-sm font-bold text-slate-800 mt-0.5">{profileType === 'SKIP_CLEAN_WASH' ? 'Bỏ Qua Giặt Sạch' : 'Quy Trình Chuẩn (Đầy Đủ)'}</div>
               <div className="text-slate-500 mt-0.5">
                 {selectedOrder?.skipCleanWash
                   ? 'Áp dụng cho đơn bỏ qua bước Giặt Sạch (có văn bản khách ký)'

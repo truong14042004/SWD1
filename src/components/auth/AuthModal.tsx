@@ -14,13 +14,13 @@ interface AuthModalProps {
 }
 
 const ROLES_LIST: { role: UserRole; title: string; desc: string }[] = [
-  { role: 'PRODUCTION_PLANNER', title: 'Production Planner', desc: 'Lập đơn, chọn vải-màu, snapshot quy trình' },
-  { role: 'PROCESS_ENGINEER', title: 'Process Engineer', desc: 'Thiết kế workflow, publish version, thẩm định custom' },
-  { role: 'STATION_OPERATOR', title: 'Station Operator', desc: 'Tổ trưởng trạm Cắt, May, Nhuộm, Wash, Hoàn thiện' },
-  { role: 'QC_INSPECTOR', title: 'QC Inspector', desc: 'Kiểm định AQL, co rút, phai màu, điều hướng Rework' },
-  { role: 'WAREHOUSE_KEEPER', title: 'Warehouse Keeper', desc: 'Quản lý kho vải theo lô (FabricLot), cấp phát vật tư' },
-  { role: 'MANAGER', title: 'Factory Manager', desc: 'Giám sát điều hành WIP, tiến độ và tỷ lệ lỗi toàn xưởng' },
-  { role: 'ADMIN', title: 'System Admin', desc: 'Quản trị tài khoản, ma trận vải-màu, audit log' },
+  { role: 'PRODUCTION_PLANNER', title: 'Kế Hoạch Sản Xuất', desc: 'Lập đơn hàng, chọn vải màu, duyệt kế hoạch may' },
+  { role: 'PROCESS_ENGINEER', title: 'Kỹ Sư Quy Trình', desc: 'Thiết kế quy trình may, ban hành chuẩn kỹ thuật' },
+  { role: 'STATION_OPERATOR', title: 'Tổ Trưởng Công Đoạn', desc: 'Quản lý chuyền Cắt, May, Nhuộm, Giặt, Đóng gói' },
+  { role: 'QC_INSPECTOR', title: 'Kiểm Định Chất Lượng (KCS)', desc: 'Kiểm tra độ co rút, phai màu, xử lý sửa hàng' },
+  { role: 'WAREHOUSE_KEEPER', title: 'Thủ Kho Vải & Phụ Liệu', desc: 'Quản lý cuộn vải, cấp phát vải theo định mức' },
+  { role: 'MANAGER', title: 'Giám Đốc Xưởng', desc: 'Theo dõi tiến độ, sản lượng và xử lý chậm chuyền' },
+  { role: 'ADMIN', title: 'Quản Trị Nhà Máy', desc: 'Quản lý tài khoản, quy tắc vải màu, nhật ký xưởng' },
 ];
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, defaultTab = 'login' }) => {
@@ -124,8 +124,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, defaultTa
               <Layers className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h3 className="font-extrabold text-xl tracking-tight">DenimFlow BO</h3>
-              <p className="text-xs text-denim-100">Xác thực & Phân quyền Back Office Quần Jean</p>
+              <h3 className="font-extrabold text-xl tracking-tight">DenimFlow</h3>
+              <p className="text-xs text-denim-100">Hệ Thống Quản Lý Sản Xuất May Quần Jean</p>
             </div>
           </div>
 
@@ -219,7 +219,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, defaultTa
               {/* Quick Login Pill Grid */}
               <div className="pt-3 border-t border-slate-100">
                 <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
-                  Hoặc Đăng Nhập Nhanh Theo Vai Trò (1-Click Demo)
+                  Đăng Nhập Nhanh Theo Từng Bộ Phận (Thử Nghiệm 1-Click)
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   {allUsers.slice(0, 6).map((u) => (
@@ -277,7 +277,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, defaultTa
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Chọn Vai Trò (RBAC Role)</label>
+                <label className="block font-bold text-slate-700 mb-1">Chọn Bộ Phận / Vị Trí Công Tác</label>
                 <select
                   value={regRole}
                   onChange={(e) => setRegRole(e.target.value as UserRole)}

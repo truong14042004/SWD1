@@ -46,27 +46,27 @@ export const ProcessEngineerView: React.FC<ProcessEngineerViewProps> = ({
     // Check exactly 1 start step (ORDER_CONFIRM)
     const startStep = version.steps.find((s) => s.code === 'ORDER_CONFIRM');
     if (!startStep) {
-      setValidationResult({ valid: false, message: 'BR-01 Lỗi: Thiếu công đoạn bắt đầu (ORDER_CONFIRM).' });
+      setValidationResult({ valid: false, message: 'Lỗi quy trình: Thiếu công đoạn tiếp nhận duyệt đơn ban đầu.' });
       return;
     }
 
     // Check end step
     const endStep = version.steps.find((s) => s.code === 'PACK_HANDOVER');
     if (!endStep) {
-      setValidationResult({ valid: false, message: 'BR-01 Lỗi: Thiếu công đoạn kết thúc (PACK_HANDOVER).' });
+      setValidationResult({ valid: false, message: 'Lỗi quy trình: Thiếu công đoạn đóng gói bàn giao cuối cùng.' });
       return;
     }
 
     // Check rework limits
     const unlimitedRework = version.steps.some((s) => s.stepType === 'QC' && s.maxRework === 0);
     if (unlimitedRework) {
-      setValidationResult({ valid: false, message: 'BR-01 Lỗi: Mọi vòng rework phải có giới hạn số lần (maxRework > 0).' });
+      setValidationResult({ valid: false, message: 'Lỗi quy trình: Mọi công đoạn sửa hàng phải quy định số lần sửa tối đa.' });
       return;
     }
 
     setValidationResult({
       valid: true,
-      message: 'BR-01 Hợp lệ: Workflow Template thỏa mãn mọi tiêu chuẩn kiểm định! Sẵn sàng công bố version mới.',
+      message: 'Hợp lệ: Quy trình may thỏa mãn đầy đủ các tiêu chuẩn kỹ thuật! Sẵn sàng ban hành phiên bản mới.',
     });
   };
 
@@ -76,7 +76,7 @@ export const ProcessEngineerView: React.FC<ProcessEngineerViewProps> = ({
     );
     setQcProfiles(updated);
     if (catalog) catalog.qcProfiles = updated;
-    setNotification('Đã cập nhật ngưỡng kiểm định QC Profile (BR-19) thành công!');
+    setNotification('Đã cập nhật tiêu chuẩn kiểm tra chất lượng co rút và độ bền màu thành công!');
     setTimeout(() => setNotification(null), 3000);
   };
 
@@ -87,13 +87,13 @@ export const ProcessEngineerView: React.FC<ProcessEngineerViewProps> = ({
         <div>
           <div className="flex items-center space-x-2">
             <span className="text-xs font-bold uppercase tracking-wider bg-white/20 text-white px-2.5 py-1 rounded-full">
-              Process Engineer Workspace
+              Khu Vực Kỹ Sư Kỹ Thuật May
             </span>
-            <span className="text-xs text-purple-200">• Người thiết kế quy trình (Workflow Designer)</span>
+            <span className="text-xs text-purple-200">• Thiết Kế Quy Trình Kỹ Thuật May</span>
           </div>
-          <h2 className="text-2xl font-bold mt-2">Thiết Kế & Cấu Hình Dynamic Workflow</h2>
+          <h2 className="text-2xl font-bold mt-2">Thiết Kế & Quản Lý Quy Trình May Quần Jean</h2>
           <p className="text-sm text-purple-100 mt-1 max-w-xl">
-            Toàn quyền thêm/bớt công đoạn, cấu hình Gatekeeper (BR-14), thẩm định đơn custom (BR-17) và thiết lập ngưỡng QC Profile (BR-19).
+            Thiết lập trình tự các công đoạn may, điều kiện chuyển chuyền, thẩm định mẫu đặt may riêng và thiết lập tiêu chuẩn kiểm định.
           </p>
         </div>
 
@@ -105,7 +105,7 @@ export const ProcessEngineerView: React.FC<ProcessEngineerViewProps> = ({
               activeTab === 'designer' ? 'bg-white text-purple-900 shadow' : 'text-white hover:bg-white/10'
             }`}
           >
-            Sơ Đồ Workflow (14 Step)
+            Sơ Đồ 14 Công Đoạn May
           </button>
           <button
             onClick={() => setActiveTab('qcProfiles')}
@@ -113,7 +113,7 @@ export const ProcessEngineerView: React.FC<ProcessEngineerViewProps> = ({
               activeTab === 'qcProfiles' ? 'bg-white text-purple-900 shadow' : 'text-white hover:bg-white/10'
             }`}
           >
-            QC Profiles (BR-19)
+            Tiêu Chuẩn Co Rút & Màu
           </button>
           <button
             onClick={() => setActiveTab('customReview')}
@@ -121,7 +121,7 @@ export const ProcessEngineerView: React.FC<ProcessEngineerViewProps> = ({
               activeTab === 'customReview' ? 'bg-white text-purple-900 shadow' : 'text-white hover:bg-white/10'
             }`}
           >
-            Nhánh Custom (BR-17)
+            Thẩm Định Mẫu Đặt Riêng
           </button>
         </div>
       </div>
@@ -139,10 +139,10 @@ export const ProcessEngineerView: React.FC<ProcessEngineerViewProps> = ({
           <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
             <div>
               <h3 className="font-bold text-slate-800 text-sm">
-                Phiên Bản Hiện Tại: {version?.versionNo ? `v${version.versionNo}` : 'v1.0'} ({version?.status})
+                Phiên Bản Hiện Tại: {version?.versionNo ? `v${version.versionNo}` : 'v1.0'} ({version?.status === 'PUBLISHED' ? 'Đang Áp Dụng Toàn Xưởng' : version?.status})
               </h3>
               <p className="text-xs text-slate-500">
-                BR-02: Version đã PUBLISHED là bất biến. Chỉnh sửa sẽ tạo bản sao version mới.
+                Lưu ý: Quy trình đã ban hành được cố định để xưởng áp dụng đồng bộ. Mọi thay đổi sẽ tạo bản ban hành mới.
               </p>
             </div>
 
@@ -152,17 +152,17 @@ export const ProcessEngineerView: React.FC<ProcessEngineerViewProps> = ({
                 className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-3 py-1.5 rounded-lg text-xs transition border border-indigo-200 flex items-center space-x-1"
               >
                 <ShieldCheck className="w-4 h-4" />
-                <span>Chạy Kiểm Định BR-01</span>
+                <span>Kiểm Tra Tính Hợp Lệ</span>
               </button>
               <button
                 onClick={() => {
-                  setNotification('Đã công bố (Publish) Version mới thành công (BR-02)! Các đơn mới sẽ snapshot version này.');
+                  setNotification('Đã ban hành quy trình may chuẩn mới! Các đơn hàng tiếp theo sẽ áp dụng theo quy trình này.');
                   setTimeout(() => setNotification(null), 3000);
                 }}
                 className="bg-purple-600 hover:bg-purple-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition shadow flex items-center space-x-1"
               >
                 <CheckCircle className="w-4 h-4" />
-                <span>Publish Version Mới</span>
+                <span>Ban Hành Quy Trình Mới</span>
               </button>
             </div>
           </div>
@@ -203,13 +203,13 @@ export const ProcessEngineerView: React.FC<ProcessEngineerViewProps> = ({
 
                 <div className="flex flex-wrap gap-1 mt-2 text-[10px]">
                   {step.requiresEvidence && (
-                    <span className="px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 font-semibold">Minh chứng (BR-15)</span>
+                    <span className="px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 font-semibold">Cần ảnh nghiệm thu</span>
                   )}
                   {step.conditionExpr && (
-                    <span className="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-mono">Guard: {step.conditionExpr}</span>
+                    <span className="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-mono">Điều kiện: {step.conditionExpr}</span>
                   )}
                   {step.maxRework > 0 && (
-                    <span className="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700">Rework max: {step.maxRework}</span>
+                    <span className="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700">Sửa tối đa: {step.maxRework} lần</span>
                   )}
                 </div>
               </div>
@@ -218,16 +218,16 @@ export const ProcessEngineerView: React.FC<ProcessEngineerViewProps> = ({
         </div>
       )}
 
-      {/* SUBTAB 2: QC PROFILES MANAGER (BR-19) */}
+      {/* SUBTAB 2: QC PROFILES MANAGER */}
       {activeTab === 'qcProfiles' && (
         <div className="pe-card bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
           <div>
             <h3 className="font-bold text-slate-900 text-base flex items-center space-x-2">
               <Sliders className="w-5 h-5 text-purple-600" />
-              <span>Cấu Hình Ngưỡng Kiểm Định QC Profiles (BR-19)</span>
+              <span>Cấu Hình Tiêu Chuẩn Kiểm Định Độ Co Rút & Độ Bền Màu</span>
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Mỗi Style có 2 profile: <strong>FULL_PROCESS</strong> (chạy giặt sạch, ngưỡng chuẩn ổn định) và <strong>SKIP_CLEAN_WASH</strong> (khách bỏ giặt sạch, ngưỡng nới lỏng).
+              Mỗi mẫu mã áp dụng 2 tiêu chuẩn: <strong>Quy Trình Chuẩn</strong> (chạy giặt sạch, độ co rút tối ưu) và <strong>Bỏ Bước Giặt</strong> (dành cho quần jean mộc theo thỏa thuận với khách).
             </p>
           </div>
 
@@ -250,7 +250,7 @@ export const ProcessEngineerView: React.FC<ProcessEngineerViewProps> = ({
                         isSkip ? 'bg-purple-200 text-purple-900' : 'bg-blue-100 text-blue-800'
                       }`}
                     >
-                      {qp.profileType}
+                      {isSkip ? 'Bỏ Giặt Sạch' : 'Quy Trình Chuẩn'}
                     </span>
                   </div>
 
@@ -281,7 +281,7 @@ export const ProcessEngineerView: React.FC<ProcessEngineerViewProps> = ({
 
                   <div className="text-[11px] text-slate-500 italic">
                     {isSkip
-                      ? 'Áp dụng khi khách yêu cầu bỏ giặt sạch (kèm văn bản khách ký xác nhận).'
+                      ? 'Áp dụng khi khách yêu cầu bỏ giặt sạch (kèm biên bản ký thỏa thuận).'
                       : 'Áp dụng cho chu trình gia công chuẩn đầy đủ.'}
                   </div>
                 </div>
@@ -291,27 +291,27 @@ export const ProcessEngineerView: React.FC<ProcessEngineerViewProps> = ({
         </div>
       )}
 
-      {/* SUBTAB 3: CUSTOM REVIEW (BR-17) */}
+      {/* SUBTAB 3: CUSTOM REVIEW */}
       {activeTab === 'customReview' && (
         <div className="pe-card bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4 text-xs">
           <div>
             <h3 className="font-bold text-slate-900 text-base flex items-center space-x-2">
               <GitFork className="w-5 h-5 text-purple-600" />
-              <span>Hội Đồng Thẩm Định Đơn Gia Công Custom Riêng (BR-17)</span>
+              <span>Hội Đồng Thẩm Định Đơn May Mẫu Đặt Riêng Theo Yêu Cầu</span>
             </h3>
             <p className="text-slate-500 mt-0.5">
-              Đơn custom yêu cầu thay đổi công đoạn hoặc kỹ thuật đặc biệt. Process Engineer đánh giá khả thi: nếu bất khả thi thì từ chối đơn (CANCELLED), nếu khả thi thì clone workflow riêng và bắt buộc duyệt mẫu (PP_SAMPLE).
+              Đơn đặt riêng có thay đổi công đoạn hoặc kỹ thuật đặc biệt. Kỹ sư quy trình thẩm định tính khả thi: nếu không khả thi thì hủy đơn, nếu khả thi thì thiết lập quy trình riêng và bắt buộc duyệt mẫu trước khi cắt vải.
             </p>
           </div>
 
           <div className="p-4 bg-purple-50 border border-purple-200 rounded-xl space-y-2">
-            <div className="font-bold text-purple-900 text-sm">Quy Trình Xử Lý Đơn Custom:</div>
+            <div className="font-bold text-purple-900 text-sm">Quy Trình Xử Lý Đơn Đặt May Riêng:</div>
             <ol className="list-decimal list-inside space-y-1 text-purple-800">
-              <li>Production Planner đánh dấu <code>isCustom = true</code> khi tiếp nhận đơn.</li>
-              <li>Đơn đi vào bước <code>CUSTOM_REVIEW</code> ngay sau <code>ORDER_CONFIRM</code>.</li>
-              <li>Process Engineer thẩm định năng lực máy móc & thiết bị xưởng.</li>
-              <li>Clone template chuẩn thành workflow riêng cho đúng 01 đơn hàng này.</li>
-              <li>Bắt buộc duyệt mẫu tiền sản xuất <code>PP_SAMPLE</code> trước khi cho phép Cắt vải.</li>
+              <li>Cán bộ kế hoạch đánh dấu đơn hàng đặt riêng khi tiếp nhận.</li>
+              <li>Đơn hàng được chuyển sang kỹ sư quy trình để thẩm định kỹ thuật may.</li>
+              <li>Kỹ sư đánh giá năng lực máy móc và thiết bị tại xưởng.</li>
+              <li>Tạo quy trình riêng biệt phù hợp cho đơn hàng này.</li>
+              <li>Bắt buộc duyệt mẫu may hoàn chỉnh trước khi cho phép tổ cắt trải vải.</li>
             </ol>
           </div>
         </div>

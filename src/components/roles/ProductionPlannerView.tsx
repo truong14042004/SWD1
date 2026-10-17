@@ -116,9 +116,9 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
     setErrorMessage(null);
     setSuccessMessage(null);
 
-    // BR-19: Skip clean wash check
+    // Skip clean wash check
     if (skipCleanWash && !ackFileUrl.trim()) {
-      setErrorMessage('BR-19: Đơn hàng bỏ giặt sạch bắt buộc phải đính kèm văn bản khách ký xác nhận!');
+      setErrorMessage('Đơn hàng bỏ qua bước giặt sạch bắt buộc phải đính kèm văn bản khách hàng ký xác nhận!');
       return;
     }
 
@@ -151,7 +151,7 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
         return;
       }
 
-      setSuccessMessage('Tiếp nhận đơn gia công mới thành công (trạng thái DRAFT)!');
+      setSuccessMessage('Tiếp nhận đơn may mới thành công! Đang chờ khách đặt cọc.');
       setActiveSubView('pipeline');
       onRefresh();
     } catch (err: any) {
@@ -173,7 +173,7 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
         setErrorMessage(data.error);
         return;
       }
-      setSuccessMessage('Xác nhận đơn thành công! Đã snapshot Workflow Version (BR-03) và mở step đầu tiên.');
+      setSuccessMessage('Duyệt đơn sản xuất thành công! Đã chốt quy trình kỹ thuật và bắt đầu vào chuyền.');
       onRefresh();
     } catch (err: any) {
       setErrorMessage(err.message || 'Lỗi');
@@ -187,13 +187,13 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
         <div>
           <div className="flex items-center space-x-2">
             <span className="text-xs font-bold uppercase tracking-wider bg-white/20 text-white px-2.5 py-1 rounded-full">
-              Production Planner Workspace
+              Không Gian Làm Việc Quản Lý Kế Hoạch Sản Xuất
             </span>
             <span className="text-xs text-blue-200">• Lập kế hoạch sản xuất & Quản lý vòng đời đơn</span>
           </div>
-          <h2 className="text-2xl font-bold mt-2">Điều Hành Kế Hoạch Sản Xuất Jean</h2>
+          <h2 className="text-2xl font-bold mt-2">Điều Hành Kế Hoạch Sản Xuất Quần Jean</h2>
           <p className="text-sm text-blue-100 mt-1 max-w-xl">
-            Tạo đơn theo Ma Trận Vải–Màu (BR-04), snapshot workflow khi Confirm (BR-03), xử lý miễn trừ giặt sạch (BR-18, BR-19) và cấp vật tư.
+            Tiếp nhận đơn đặt hàng, kiểm tra phối vải chuẩn kỹ thuật, phê duyệt sản xuất và cấp phát nguyên phụ liệu.
           </p>
         </div>
 
@@ -208,7 +208,7 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
             }`}
           >
             <ClipboardList className="w-3.5 h-3.5" />
-            <span>Tiến Độ Đơn</span>
+            <span>Tiến Độ Đơn Hàng</span>
           </button>
           <button
             onClick={() => setActiveSubView('create')}
@@ -219,7 +219,7 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
             }`}
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-            <span>Lập Đơn Mới</span>
+            <span>Tiếp Nhận Đơn Mới</span>
           </button>
           <button
             onClick={() => setActiveSubView('bom')}
@@ -230,7 +230,7 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
-            <span>Định Mức BOM</span>
+            <span>Định Mức Vật Tư</span>
           </button>
         </div>
       </div>
@@ -254,11 +254,11 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
           <div className="flex items-center justify-between border-b border-slate-100 pb-4">
             <div>
               <div className="inline-flex items-center space-x-2 px-2.5 py-0.5 rounded-full bg-denim-50 text-denim-700 text-[11px] font-bold uppercase tracking-wider mb-1">
-                <span>Form Lập Đơn Hàng Mới</span>
+                <span>Tiếp Nhận Đơn Hàng Mới</span>
               </div>
               <h3 className="font-black text-xl text-slate-900">Tiếp Nhận Đơn Hàng Gia Công Quần Jean</h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Hệ thống tự động kích hoạt kiểm tra tương thích Ma Trận Vải–Màu (BR-04) và áp dụng tiêu chuẩn QC Profile (BR-19).
+                Hệ thống tự động kiểm tra loại vải có phù hợp với màu may và áp dụng quy chuẩn kiểm tra chất lượng phù hợp.
               </p>
             </div>
 
@@ -268,7 +268,7 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
               className="text-xs font-bold text-slate-500 hover:text-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 transition flex items-center space-x-1"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Quay lại Pipeline</span>
+              <span>Quay lại tiến độ</span>
             </button>
           </div>
 
@@ -314,7 +314,7 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
 
               <div>
                 <label className="block font-bold text-slate-700 mb-1.5">
-                  Màu Sắc Lọc Theo Ma Trận Tương Thích Vải–Màu (BR-04) *
+                  Màu Sắc Lọc Theo Bảng Quy Tắc Vải – Màu Tương Thích *
                 </label>
                 <select
                   value={colorId}
@@ -325,7 +325,7 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
                     const isAllowed = allowedColorIds.includes(c.id);
                     return (
                       <option key={c.id} value={c.id} disabled={!isAllowed}>
-                        {c.name} {isAllowed ? '✓ (Hợp lệ theo BR-04)' : '✗ (Bị chặn: Không tương thích theo BR-04)'}
+                        {c.name} {isAllowed ? '✓ (Cho phép may)' : '✗ (Không tương thích - Không nhận may)'}
                       </option>
                     );
                   })}
@@ -337,7 +337,7 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
             <div className="space-y-4 pt-4 border-t border-slate-100">
               <h4 className="font-extrabold text-slate-900 text-sm flex items-center space-x-2">
                 <span className="w-6 h-6 rounded-full bg-denim-600 text-white flex items-center justify-center text-xs">2</span>
-                <span>Công Nghệ Wash Mài & Điều Kiện Bỏ Giặt Sạch (BR-18, BR-19)</span>
+                <span>Công Nghệ Wash Mài & Miễn Trừ Công Đoạn Giặt Sạch</span>
               </h4>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -375,13 +375,13 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
                     onChange={(e) => setSkipCleanWash(e.target.checked)}
                     className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500"
                   />
-                  <span>Khách hàng yêu cầu BỎ GIẶT SẠCH (BR-18 & BR-19 — Raw Denim)</span>
+                  <span>Khách hàng yêu cầu BỎ QUA BƯỚC GIẶT SẠCH (Tiết kiệm chi phí — Quần Jean mộc)</span>
                 </label>
 
                 {skipCleanWash && (
                   <div className="space-y-3 pt-2">
                     <FileUpload
-                      label="Tệp Văn Bản Khách Ký Xác Nhận (Waiver Bỏ Giặt Sạch)"
+                      label="Biên Bản Thỏa Thuận Miễn Trừ Độ Co Rút (Đại diện khách hàng đã ký)"
                       helperText="Bấm để chọn tệp từ máy tính (PDF, Scan ảnh, Word) hoặc kéo thả vào đây"
                       accept=".pdf,.png,.jpg,.jpeg,.docx"
                       value={ackFileUrl}
@@ -471,10 +471,10 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
             <div>
               <h3 className="font-extrabold text-slate-900 text-base flex items-center space-x-2">
                 <ClipboardList className="w-5 h-5 text-denim-600" />
-                <span>Pipeline Đơn Hàng Đang Thực Hiện</span>
+                <span>Tiến Độ Các Đơn Hàng May Mặc</span>
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Quản lý các trạng thái: DRAFT $\to$ CONFIRMED $\to$ IN_PRODUCTION $\to$ COMPLETED.
+                Theo dõi tiến độ từ lúc tiếp nhận đơn nháp $\to$ duyệt sản xuất $\to$ đưa vào dây chuyền may $\to$ hoàn tất xuất xưởng.
               </p>
             </div>
 
@@ -483,7 +483,7 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
               className="bg-denim-600 hover:bg-denim-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow transition flex items-center space-x-1.5"
             >
               <Plus className="w-4 h-4" />
-              <span>+ Lập Đơn Hàng Mới</span>
+              <span>+ Tiếp Nhận Đơn Hàng Mới</span>
             </button>
           </div>
 
@@ -493,6 +493,15 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
               const style = catalog?.styles?.find((s: any) => s.id === order.styleId);
               const fabric = catalog?.fabrics?.find((f: any) => f.id === order.fabricTypeId);
               const color = catalog?.colors?.find((c: any) => c.id === order.colorId);
+
+              const statusLabel =
+                order.status === 'IN_PRODUCTION'
+                  ? 'Đang may gia công'
+                  : order.status === 'CONFIRMED'
+                  ? 'Đã duyệt sản xuất'
+                  : order.status === 'COMPLETED'
+                  ? 'Đã hoàn thành'
+                  : 'Đơn nháp (Chờ cọc)';
 
               return (
                 <div
@@ -512,7 +521,7 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
                           : 'bg-slate-100 text-slate-700'
                       }`}
                     >
-                      {order.status}
+                      {statusLabel}
                     </span>
                   </div>
 
@@ -535,13 +544,13 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500">QC Profile:</span>
+                      <span className="text-slate-500">Tiêu chuẩn kiểm phẩm:</span>
                       <span className={`font-bold ${order.skipCleanWash ? 'text-purple-700' : 'text-blue-700'}`}>
-                        {order.skipCleanWash ? 'SKIP_CLEAN_WASH (BR-19)' : 'FULL_PROCESS'}
+                        {order.skipCleanWash ? 'Bỏ giặt sạch (Theo thỏa thuận)' : 'Quy trình tiêu chuẩn'}
                       </span>
                     </div>
                     <div className="flex justify-between items-center pt-1 border-t border-slate-200/60">
-                      <span className="text-slate-500">Thanh toán (PayOS):</span>
+                      <span className="text-slate-500">Thanh toán tiền cọc:</span>
                       {order.paymentStatus === 'DEPOSIT_PAID' ? (
                         <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-bold text-[10px]">
                           <CheckCircle2 className="w-3 h-3 text-emerald-600" />
@@ -565,7 +574,7 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
                     <div className="p-2.5 bg-purple-50/90 border border-purple-200 rounded-xl text-[11px] text-purple-900 font-medium flex items-center justify-between">
                       <span className="flex items-center space-x-1.5 truncate">
                         <FileCheck className="w-3.5 h-3.5 text-purple-600 flex-shrink-0" />
-                        <span className="truncate">Văn bản khách ký (BR-19)</span>
+                        <span className="truncate">Thỏa thuận co rút (khách ký)</span>
                       </span>
                       <button
                         type="button"
@@ -575,8 +584,8 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
                             fileUrl:
                               order.acknowledgement?.fileUrl ||
                               '/docs/waiver-raw-denim-signed.pdf',
-                            fileName: `Waiver_${order.orderNumber}_Signed.pdf`,
-                            title: `Văn Bản Khách Ký Bỏ Giặt Sạch (BR-19) — Đơn ${order.orderNumber}`,
+                            fileName: `Thoa_Thuan_Mien_Tru_Co_Rut_${order.orderNumber}.pdf`,
+                            title: `Thỏa Thuận Khách Hàng Đồng Ý Miễn Trừ Độ Co Rút — Đơn ${order.orderNumber}`,
                           })
                         }
                         className="px-2.5 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-bold text-[10px] shadow-2xs transition flex items-center space-x-1 flex-shrink-0 ml-1.5"
@@ -592,7 +601,7 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
                       onClick={() => setSelectedOrder(order)}
                       className="text-xs font-semibold text-slate-600 hover:text-denim-600"
                     >
-                      BOM định mức →
+                      Định mức vật tư →
                     </button>
 
                     <div className="flex items-center space-x-1.5">
@@ -607,10 +616,10 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
                             })
                           }
                           className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold px-2.5 py-1.5 rounded-lg text-xs shadow-xs transition flex items-center space-x-1"
-                          title="Thanh toán cọc 50% bằng VietQR qua PayOS"
+                          title="Thanh toán cọc 50% qua quét mã VietQR"
                         >
                           <QrCode className="w-3.5 h-3.5" />
-                          <span>Cọc PayOS</span>
+                          <span>Thanh toán cọc</span>
                         </button>
                       )}
 
@@ -625,7 +634,7 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
                             })
                           }
                           className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-2 py-1.5 rounded-lg text-xs transition flex items-center space-x-1"
-                          title="Xem thông tin biên lai chuyển khoản PayOS"
+                          title="Xem biên lai chuyển khoản ngân hàng"
                         >
                           <Receipt className="w-3.5 h-3.5 text-emerald-600" />
                           <span>Biên lai</span>
@@ -638,7 +647,7 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
                           className="bg-denim-600 hover:bg-denim-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs shadow transition flex items-center space-x-1"
                         >
                           <CheckCircle className="w-3.5 h-3.5" />
-                          <span>Confirm</span>
+                          <span>Duyệt đơn</span>
                         </button>
                       )}
                     </div>
@@ -697,7 +706,7 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
                           <td className="p-2.5 text-slate-500">{b.unit}</td>
                           <td className="p-2.5 text-emerald-700 font-semibold">
                             {o.allocations?.some((a) => a.bomLineId === b.id)
-                              ? '✓ Đã cấp phát (Đủ điều kiện CUTTING BR-06)'
+                              ? '✓ Đã xuất vật tư (Đủ điều kiện để tổ cắt làm việc)'
                               : 'Chờ Thủ Kho Cấp Phát'}
                           </td>
                         </tr>
@@ -784,7 +793,7 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
         }
         onPaymentSuccess={() => {
           setSuccessMessage(
-            'Thanh toán PayOS thành công! Hệ thống đã ghi nhận tiền cọc, tự động xác nhận đơn và snapshot quy trình (BR-03).'
+            'Đã nhận tiền cọc thành công! Đơn hàng đã được duyệt và chuyển sang xưởng để chuẩn bị may.'
           );
           onRefresh();
         }}

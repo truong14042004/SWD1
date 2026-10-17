@@ -6,7 +6,7 @@ import { UserRole } from '@/types';
 import { Layers, LogOut, LogIn, UserCheck } from 'lucide-react';
 
 const ROLE_BADGES: Record<UserRole, { label: string; bg: string; text: string; border: string }> = {
-  ADMIN: { label: 'Admin Hệ Thống', bg: 'bg-slate-100', text: 'text-slate-800', border: 'border-slate-300' },
+  ADMIN: { label: 'Quản Trị Nhà Máy', bg: 'bg-slate-100', text: 'text-slate-800', border: 'border-slate-300' },
   PROCESS_ENGINEER: { label: 'Kỹ Sư Quy Trình', bg: 'bg-purple-50', text: 'text-purple-800', border: 'border-purple-200' },
   PRODUCTION_PLANNER: { label: 'Kế Hoạch Sản Xuất', bg: 'bg-blue-50', text: 'text-blue-800', border: 'border-blue-200' },
   WAREHOUSE_KEEPER: { label: 'Thủ Kho Vải', bg: 'bg-emerald-50', text: 'text-emerald-800', border: 'border-emerald-200' },
@@ -33,9 +33,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAuthModal }) => {
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <span className="text-lg font-black text-slate-900 tracking-tight">DenimFlow BO</span>
+              <span className="text-lg font-black text-slate-900 tracking-tight">DenimFlow</span>
               <span className="text-[10px] bg-denim-50 text-denim-700 font-extrabold px-2.5 py-0.5 rounded-full border border-denim-200 tracking-wide uppercase">
-                Dynamic Workflow
+                Quy Trình Chuẩn
               </span>
             </div>
             <p className="text-[11px] text-slate-500 font-medium">Hệ Thống Quản Lý Gia Công Quần Jean</p>

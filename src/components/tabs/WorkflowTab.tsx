@@ -30,13 +30,13 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ workflowData }) => {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
-            <h2 className="text-xl font-bold text-slate-900">Dynamic Workflow Engine — Sơ Đồ Quy Trình May Jean</h2>
+            <h2 className="text-xl font-bold text-slate-900">Sơ Đồ Chuỗi Công Đoạn Sản Xuất Quần Jean</h2>
             <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-              Version {version.versionNo} (PUBLISHED - BR-02)
+              Phiên Bản Áp Dụng: v{version.versionNo} (Đang Ban Hành)
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-1 max-w-2xl">
-            Chuỗi 14 công đoạn và các nhánh rẽ điều kiện (Nhuộm, Wash, Thêu, Giặt Sạch, Custom Review). Mọi chuyển tiếp được kiểm soát bởi Gatekeeper (BR-14).
+            Quy trình 14 công đoạn sản xuất và các phân nhánh kỹ thuật (Nhuộm, Wash mài, Thêu, Giặt sạch, May mẫu). Kiểm soát điều kiện chuyển tiếp nghiêm ngặt giữa các xưởng.
           </p>
         </div>
       </div>
@@ -77,13 +77,13 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ workflowData }) => {
                 {step.requiresEvidence && (
                   <span className="px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 font-medium flex items-center space-x-1">
                     <FileText className="w-3 h-3" />
-                    <span>Cần minh chứng (BR-15)</span>
+                    <span>Cần ảnh nghiệm thu</span>
                   </span>
                 )}
 
                 {step.conditionExpr && (
                   <span className="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-mono font-medium">
-                    Guard: {step.conditionExpr}
+                    Điều kiện: {step.conditionExpr}
                   </span>
                 )}
               </div>
@@ -109,27 +109,27 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ workflowData }) => {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
             <div className="bg-white p-3 rounded-lg border border-slate-200">
-              <div className="text-slate-400 font-semibold uppercase">Loại Step & Trạm</div>
+              <div className="text-slate-400 font-semibold uppercase">Loại Công Đoạn & Trạm</div>
               <div className="text-sm font-bold text-slate-800 mt-1">{selectedStep.stepType}</div>
               <div className="text-slate-600 mt-0.5">Trạm: {selectedStep.stationType}</div>
             </div>
 
             <div className="bg-white p-3 rounded-lg border border-slate-200">
-              <div className="text-slate-400 font-semibold uppercase">Quy Tắc Gatekeeper (BR-14)</div>
+              <div className="text-slate-400 font-semibold uppercase">Điều Kiện Chuyển Chuyền</div>
               <div className="text-slate-700 mt-1">
-                {selectedStep.requiresEvidence ? '✓ Bắt buộc tối thiểu 01 tệp minh chứng' : '• Không yêu cầu minh chứng'}
+                {selectedStep.requiresEvidence ? '✓ Bắt buộc ảnh chụp nghiệm thu' : '• Không yêu cầu minh chứng'}
               </div>
               <div className="text-slate-700">
-                • Tiền nhiệm phải hoàn thành (DONE hoặc SKIPPED)
+                • Công đoạn trước phải hoàn thành xong
               </div>
             </div>
 
             <div className="bg-white p-3 rounded-lg border border-slate-200">
-              <div className="text-slate-400 font-semibold uppercase">Giới Hạn Rework (BR-10)</div>
+              <div className="text-slate-400 font-semibold uppercase">Giới Hạn Sửa Lại</div>
               <div className="text-sm font-bold text-slate-800 mt-1">
-                {selectedStep.maxRework > 0 ? `Tối đa ${selectedStep.maxRework} vòng rework` : 'Không áp dụng'}
+                {selectedStep.maxRework > 0 ? `Tối đa ${selectedStep.maxRework} lần sửa` : 'Không áp dụng'}
               </div>
-              <div className="text-slate-500 mt-0.5">Vượt quá sẽ chuyển Planner xử lý</div>
+              <div className="text-slate-500 mt-0.5">Vượt quá sẽ chuyển cán bộ kế hoạch xử lý</div>
             </div>
           </div>
         </div>

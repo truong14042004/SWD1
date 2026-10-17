@@ -51,7 +51,7 @@ export const WarehouseKeeperView: React.FC<WarehouseKeeperViewProps> = ({
         return;
       }
 
-      setNotification('Cấp phát vải thành công! Đơn hàng đã đủ vật tư để chuyển sang bước CẮT (BR-06).');
+      setNotification('Xuất vải thành công! Đơn hàng đã có đủ vải để bàn giao cho tổ cắt.');
       setTimeout(() => setNotification(null), 3500);
       onRefresh();
     } catch (err: any) {
@@ -68,13 +68,13 @@ export const WarehouseKeeperView: React.FC<WarehouseKeeperViewProps> = ({
         <div>
           <div className="flex items-center space-x-2">
             <span className="text-xs font-bold uppercase tracking-wider bg-white/20 text-white px-2.5 py-1 rounded-full">
-              Warehouse Keeper Workspace
+              Khu Vực Thủ Kho
             </span>
-            <span className="text-xs text-emerald-100">• Quản lý kho vải & Cấp phát vật tư</span>
+            <span className="text-xs text-emerald-100">• Quản lý kho vải & Xuất vật tư</span>
           </div>
-          <h2 className="text-2xl font-bold mt-2">Kho Vải Denim & Phụ Liệu Sản Xuất</h2>
+          <h2 className="text-2xl font-bold mt-2">Kho Vải Denim & Phụ Liệu May</h2>
           <p className="text-sm text-emerald-100 mt-1 max-w-xl">
-            Theo dõi tồn kho theo từng cuộn/lô (`FabricLot`), cấp phát vật tư theo định mức BOM (BR-06) và giải phóng tồn kho khi hủy đơn (BR-12).
+            Theo dõi tồn kho theo từng cuộn vải, xuất vải theo định mức may và hoàn trả vải vào kho khi đơn bị hủy.
           </p>
         </div>
       </div>
@@ -86,15 +86,15 @@ export const WarehouseKeeperView: React.FC<WarehouseKeeperViewProps> = ({
         </div>
       )}
 
-      {/* Orders awaiting fabric allocation (BR-06) */}
+      {/* Orders awaiting fabric allocation */}
       <div className="wh-card bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm space-y-4">
         <div>
           <h3 className="font-bold text-slate-900 text-base flex items-center space-x-2">
             <Scissors className="w-5 h-5 text-emerald-600" />
-            <span>Yêu Cầu Cấp Phát Vải Cho Tổ Cắt (Chốt Chặn BR-06)</span>
+            <span>Yêu Cầu Xuất Vải Bàn Giao Cho Tổ Cắt</span>
           </h3>
           <p className="text-xs text-slate-500 mt-0.5">
-            BR-06: Tổ Cắt không thể bắt đầu công đoạn CUTTING nếu Thủ Kho chưa cấp phát đủ vải theo định mức BOM.
+            Lưu ý: Tổ Cắt chỉ được nhận việc và trải vải sau khi kho đã xuất đủ số mét vải theo kế hoạch.
           </p>
         </div>
 
@@ -104,8 +104,8 @@ export const WarehouseKeeperView: React.FC<WarehouseKeeperViewProps> = ({
               <tr>
                 <th className="p-3">Mã Đơn Hàng</th>
                 <th className="p-3">Trạng Thái Đơn</th>
-                <th className="p-3">Vải Cần Cấp (BOM)</th>
-                <th className="p-3">Đã Cấp / Định Mức</th>
+                <th className="p-3">Vải Cần Xuất Theo Định Mức</th>
+                <th className="p-3">Đã Xuất / Kế Hoạch</th>
                 <th className="p-3 text-right">Hành Động Của Thủ Kho</th>
               </tr>
             </thead>
@@ -119,12 +119,22 @@ export const WarehouseKeeperView: React.FC<WarehouseKeeperViewProps> = ({
                 const isFullyAllocated = fabricBom && totalAllocated >= fabricBom.requiredQty;
                 const defaultLot = catalog?.fabricLots?.[0];
 
+                const getStatusText = (status: string) => {
+                  switch (status) {
+                    case 'DRAFT': return 'Chờ đặt cọc';
+                    case 'CONFIRMED': return 'Đã duyệt may';
+                    case 'IN_PRODUCTION': return 'Đang may';
+                    case 'COMPLETED': return 'Hoàn thành';
+                    default: return status;
+                  }
+                };
+
                 return (
                   <tr key={order.id} className="hover:bg-slate-50/50">
                     <td className="p-3 font-bold text-slate-900">{order.orderNumber}</td>
                     <td className="p-3">
                       <span className="px-2 py-0.5 rounded-full font-bold bg-blue-50 text-blue-700 text-[10px]">
-                        {order.status}
+                        {getStatusText(order.status)}
                       </span>
                     </td>
                     <td className="p-3">
@@ -155,7 +165,7 @@ export const WarehouseKeeperView: React.FC<WarehouseKeeperViewProps> = ({
                           }
                           className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg shadow-sm transition text-xs"
                         >
-                          {allocatingOrderId === order.id ? 'Đang cấp...' : 'Cấp Vải Từ Lô Kho (BR-06)'}
+                          {allocatingOrderId === order.id ? 'Đang cấp...' : 'Xuất Vải Cho Đơn Hàng'}
                         </button>
                       )}
                     </td>
@@ -172,7 +182,7 @@ export const WarehouseKeeperView: React.FC<WarehouseKeeperViewProps> = ({
         <div>
           <h3 className="font-bold text-slate-900 text-base flex items-center space-x-2">
             <Package className="w-5 h-5 text-emerald-600" />
-            <span>Tồn Kho Vải Denim Theo Từng Lô (FabricLot)</span>
+            <span>Quản Lý Tồn Kho Vải Denim Theo Cuộn / Lô</span>
           </h3>
           <p className="text-xs text-slate-500 mt-0.5">
             Mỗi cuộn vải được theo dõi số lô, mét khả dụng và kết quả thử co rút ban đầu.

@@ -83,7 +83,7 @@ export const StationOperatorView: React.FC<StationOperatorViewProps> = ({
         setErrorMessage(data.error);
         return;
       }
-      setSuccessMessage('Bắt đầu công đoạn thành công! Trạng thái chuyển sang IN_PROGRESS.');
+      setSuccessMessage('Bắt đầu công đoạn thành công! Đã chuyển sang trạng thái đang thực hiện.');
       onRefresh();
     } catch (err: any) {
       setErrorMessage(err.message || 'Lỗi');
@@ -118,7 +118,7 @@ export const StationOperatorView: React.FC<StationOperatorViewProps> = ({
         return;
       }
 
-      setSuccessMessage('Hoàn thành công đoạn! Số lượng hợp lệ (BR-08) và đã mở công đoạn kế tiếp.');
+      setSuccessMessage('Hoàn tất công đoạn may! Đã nghiệm thu số lượng và chuyển tiếp sang xưởng kế tiếp.');
       setCompleteModalData(null);
       onRefresh();
     } catch (err: any) {
@@ -133,13 +133,13 @@ export const StationOperatorView: React.FC<StationOperatorViewProps> = ({
         <div>
           <div className="flex items-center space-x-2">
             <span className="text-xs font-bold uppercase tracking-wider bg-white/20 text-white px-2.5 py-1 rounded-full">
-              Station Operator Workspace
+              Khu Vực Tổ Trưởng Sản Xuất
             </span>
             <span className="text-xs text-amber-100">• Tổ trưởng các trạm sản xuất trực tiếp</span>
           </div>
-          <h2 className="text-2xl font-bold mt-2">Bàn Làm Việc Trạm Gia Công (Shopfloor Terminal)</h2>
+          <h2 className="text-2xl font-bold mt-2">Bảng Điều Khiển Công Đoạn Sản Xuất</h2>
           <p className="text-sm text-amber-100 mt-1 max-w-xl">
-            Nhận lệnh sản xuất, kích hoạt Gatekeeper Chain (BR-14), nhập sản lượng đạt/lỗi theo bundle (BR-08) và tải minh chứng (BR-15).
+            Nhận lệnh may, kiểm tra điều kiện vào chuyền, bàn giao số lượng đạt và lỗi theo từng bó hàng.
           </p>
         </div>
       </div>
@@ -221,16 +221,16 @@ export const StationOperatorView: React.FC<StationOperatorViewProps> = ({
                 {step.requiresEvidence && (
                   <div className="p-2 bg-purple-50 border border-purple-200 rounded-lg text-[11px] text-purple-800 font-medium flex items-center space-x-1">
                     <FileUp className="w-3.5 h-3.5" />
-                    <span>BR-15: Bắt buộc đính kèm tối thiểu 01 tệp minh chứng khi hoàn thành</span>
+                    <span>Yêu cầu đính kèm ảnh chụp nghiệm thu khi hoàn tất công đoạn</span>
                   </div>
                 )}
 
                 <div className="flex items-center justify-between pt-3 border-t border-slate-100">
                   <div className="text-[11px] text-slate-500">
-                    {isReady && <span className="text-blue-700 font-bold flex items-center space-x-1"><Unlock className="w-3 h-3" /><span>Gatekeeper Đạt: Sẵn sàng làm</span></span>}
+                    {isReady && <span className="text-blue-700 font-bold flex items-center space-x-1"><Unlock className="w-3 h-3" /><span>Đủ điều kiện: Sẵn sàng thực hiện</span></span>}
                     {isInProgress && <span className="text-amber-700 font-bold">Đang thao tác tại trạm</span>}
                     {isDone && <span className="text-emerald-700 font-bold flex items-center space-x-1"><CheckCircle className="w-3.5 h-3.5" /><span>Đạt {step.qtyGood} cái</span></span>}
-                    {step.status === 'PENDING' && <span className="text-slate-400 flex items-center space-x-1"><Lock className="w-3 h-3" /><span>Đang chờ trạm trước</span></span>}
+                    {step.status === 'PENDING' && <span className="text-slate-400 flex items-center space-x-1"><Lock className="w-3 h-3" /><span>Đang chờ xưởng trước bàn giao</span></span>}
                   </div>
 
                   <div className="space-x-2">
@@ -240,7 +240,7 @@ export const StationOperatorView: React.FC<StationOperatorViewProps> = ({
                         className="bg-denim-600 hover:bg-denim-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow transition flex items-center space-x-1"
                       >
                         <Play className="w-3.5 h-3.5" />
-                        <span>Bắt Đầu (Start)</span>
+                        <span>Bắt Đầu</span>
                       </button>
                     )}
 
@@ -260,7 +260,7 @@ export const StationOperatorView: React.FC<StationOperatorViewProps> = ({
                         className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow transition flex items-center space-x-1"
                       >
                         <Check className="w-3.5 h-3.5" />
-                        <span>Hoàn Thành (BR-08)</span>
+                        <span>Nghiệm Thu Hoàn Thành</span>
                       </button>
                     )}
                   </div>
@@ -279,13 +279,13 @@ export const StationOperatorView: React.FC<StationOperatorViewProps> = ({
               Nghiệm Thu: {completeModalData.stepName}
             </h3>
             <p className="text-slate-500">
-              BR-08 Bảo toàn số lượng: $Số\_vào ({completeModalData.qtyIn}) = Số\_đạt + Số\_lỗi$.
+              Kiểm đếm số lượng: Tổng số nhận ({completeModalData.qtyIn}) = Số đạt + Số lỗi.
             </p>
 
             <form onSubmit={handleCompleteStep} className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Số Đạt (Good)</label>
+                  <label className="block font-bold text-slate-700 mb-1">Số Lượng Đạt Chuẩn</label>
                   <input
                     type="number"
                     min="0"
@@ -296,7 +296,7 @@ export const StationOperatorView: React.FC<StationOperatorViewProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Số Lỗi (Defect)</label>
+                  <label className="block font-bold text-slate-700 mb-1">Số Lượng Hỏng / Lỗi</label>
                   <input
                     type="number"
                     min="0"
@@ -311,7 +311,7 @@ export const StationOperatorView: React.FC<StationOperatorViewProps> = ({
               {completeModalData.requiresEvidence && (
                 <div className="p-3 bg-purple-50/80 border border-purple-200 rounded-2xl space-y-2">
                   <FileUpload
-                    label="BR-15: Minh Chứng Hình Ảnh / Phiếu Nghiệm Thu"
+                    label="Ảnh Chụp Thực Tế Hoặc Phiếu Nghiệm Thu"
                     helperText="Chọn ảnh chụp thực tế hoặc phiếu nghiệm thu từ thiết bị"
                     accept=".png,.jpg,.jpeg,.pdf,.webp"
                     uploadFolder="evidences"
@@ -347,7 +347,7 @@ export const StationOperatorView: React.FC<StationOperatorViewProps> = ({
                   type="submit"
                   className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow"
                 >
-                  Xác Nhận & Mở Step Kế Tiếp
+                  Xác Nhận Bàn Giao Chuyền Tiếp Theo
                 </button>
               </div>
             </form>

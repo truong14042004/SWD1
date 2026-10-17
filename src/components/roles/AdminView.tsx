@@ -63,7 +63,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
     if (catalog) {
       catalog.fabricColorRules = updatedRules;
     }
-    setNotification('Cập nhật Ma Trận Vải–Màu (BR-04) thành công! Các đơn hàng mới sẽ tuân thủ quy tắc này.');
+    setNotification('Cập nhật quy tắc vải và màu nhuộm thành công! Các đơn hàng tiếp theo sẽ áp dụng theo quy tắc này.');
     setTimeout(() => setNotification(null), 4000);
   };
 
@@ -74,13 +74,13 @@ export const AdminView: React.FC<AdminViewProps> = ({
         <div>
           <div className="flex items-center space-x-2">
             <span className="text-xs font-bold uppercase tracking-wider bg-white/20 text-white px-2.5 py-1 rounded-full">
-              Admin Workspace
+              Khu Vực Quản Trị Nhà Máy
             </span>
             <span className="text-xs text-blue-200">• Toàn quyền Quản trị & Danh mục</span>
           </div>
-          <h2 className="text-2xl font-bold mt-2">Quản Trị Hệ Thống DenimFlow BO</h2>
+          <h2 className="text-2xl font-bold mt-2">Quản Trị Vận Hành Xưởng May DenimFlow</h2>
           <p className="text-sm text-blue-100 mt-1 max-w-xl">
-            Cấu hình ma trận tương thích Vải–Màu (BR-04), quản lý tài khoản nhân sự và kiểm tra nhật ký kiểm toán bất biến.
+            Cấu hình quy tắc kết hợp vải và màu nhuộm, phân quyền nhân sự các bộ phận và tra cứu nhật ký sản xuất.
           </p>
         </div>
 
@@ -92,7 +92,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
               activeSubTab === 'matrix' ? 'bg-white text-indigo-900 shadow' : 'text-white hover:bg-white/10'
             }`}
           >
-            Ma Trận Vải–Màu (BR-04)
+            Quy Tắc Phối Vải & Màu
           </button>
           <button
             onClick={() => setActiveSubTab('users')}
@@ -100,7 +100,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
               activeSubTab === 'users' ? 'bg-white text-indigo-900 shadow' : 'text-white hover:bg-white/10'
             }`}
           >
-            Tài Khoản & Vai Trò
+            Nhân Sự & Bộ Phận
           </button>
           <button
             onClick={() => setActiveSubTab('audit')}
@@ -108,7 +108,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
               activeSubTab === 'audit' ? 'bg-white text-indigo-900 shadow' : 'text-white hover:bg-white/10'
             }`}
           >
-            Audit Log Toàn Cục
+            Sổ Nhật Ký Xưởng May
           </button>
         </div>
       </div>
@@ -120,27 +120,27 @@ export const AdminView: React.FC<AdminViewProps> = ({
         </div>
       )}
 
-      {/* SUBTAB 1: Fabric-Color Matrix (BR-04) */}
+      {/* SUBTAB 1: Fabric-Color Matrix */}
       {activeSubTab === 'matrix' && (
         <div className="admin-card bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-4">
             <div>
               <h3 className="text-base font-bold text-slate-900 flex items-center space-x-2">
                 <Grid className="w-5 h-5 text-indigo-600" />
-                <span>Bảng Ma Trận Tương Thích Vải – Màu (Fabric–Color Matrix Editor)</span>
+                <span>Bảng Quy Tắc Phối Vải & Màu Nhuộm</span>
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Quy tắc <strong>BR-04</strong>: Ngăn chặn tuyệt đối việc nhân viên kế hoạch chọn sai cặp vải denim và màu sắc gây hư hỏng cả lô hàng.
+                Quy tắc xuất xưởng: Ngăn chặn tuyệt đối việc chọn sai loại vải và màu nhuộm không tương thích gây loang màu hoặc hỏng vải.
               </p>
             </div>
             <div className="flex items-center space-x-3 text-xs">
               <span className="flex items-center space-x-1 text-emerald-700 font-semibold">
                 <span className="w-3 h-3 bg-emerald-500 rounded-sm inline-block"></span>
-                <span>Cho phép (Allowed)</span>
+                <span>Cho phép may</span>
               </span>
               <span className="flex items-center space-x-1 text-slate-400 font-semibold">
                 <span className="w-3 h-3 bg-slate-200 rounded-sm inline-block"></span>
-                <span>Cấm (Blocked)</span>
+                <span>Không tương thích</span>
               </span>
             </div>
           </div>
@@ -202,10 +202,10 @@ export const AdminView: React.FC<AdminViewProps> = ({
             <div>
               <h3 className="text-base font-bold text-slate-900 flex items-center space-x-2">
                 <Users className="w-5 h-5 text-indigo-600" />
-                <span>Danh Sách 7 Vai Trò Nhân Sự (RBAC - Role-Based Access Control)</span>
+                <span>Danh Sách Nhân Sự & Vị Trí Đảm Nhiệm Trong Xưởng</span>
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Mỗi tài khoản được phân quyền độc lập, đảm bảo nguyên tắc phân tách trách nhiệm (BR-11).
+                Mỗi vị trí có thẩm quyền riêng biệt, thợ may và KCS độc lập nhằm đảm bảo chất lượng khách quan.
               </p>
             </div>
           </div>
@@ -240,10 +240,10 @@ export const AdminView: React.FC<AdminViewProps> = ({
           <div>
             <h3 className="text-base font-bold text-slate-900 flex items-center space-x-2">
               <FileText className="w-5 h-5 text-indigo-600" />
-              <span>Nhật Ký Kiểm Toán Toàn Hệ Thống (BR-16)</span>
+              <span>Sổ Nhật Ký Hoạt Động & Lịch Sử Đơn Hàng Toàn Xưởng</span>
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Toàn bộ thao tác chuyển trạng thái, nhập số lượng, cấp phát vật tư được ghi nhận bất biến và không thể sửa đổi.
+              Mọi hoạt động duyệt đơn, xuất vải, nghiệm thu số lượng và kiểm định chất lượng đều được lưu trữ minh bạch, chính xác.
             </p>
           </div>
 

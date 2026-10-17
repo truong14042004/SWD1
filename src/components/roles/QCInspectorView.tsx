@@ -74,7 +74,7 @@ export const QCInspectorView: React.FC<QCInspectorViewProps> = ({
         return;
       }
 
-      setSuccessMessage('Lưu kết quả kiểm định QC thành công! Dữ liệu đã ghi nhận vào Audit Log (BR-16).');
+      setSuccessMessage('Lưu kết quả kiểm tra chất lượng thành công! Đã ghi nhận vào sổ nhật ký xưởng.');
       onRefresh();
     } catch (err: any) {
       setErrorMessage(err.message || 'Lỗi');
@@ -88,13 +88,13 @@ export const QCInspectorView: React.FC<QCInspectorViewProps> = ({
         <div>
           <div className="flex items-center space-x-2">
             <span className="text-xs font-bold uppercase tracking-wider bg-white/20 text-white px-2.5 py-1 rounded-full">
-              QC Inspector Workspace
+              Khu Vực Kiểm Định Chất Lượng (KCS)
             </span>
             <span className="text-xs text-rose-100">• Kiểm định chất lượng độc lập & Phê duyệt nghiệm thu</span>
           </div>
-          <h2 className="text-2xl font-bold mt-2">Trạm Kiểm Định Chất Lượng Quần Jean (AQL & Co Rút)</h2>
+          <h2 className="text-2xl font-bold mt-2">Kiểm Tra Chất Lượng Sản Phẩm (Độ Co Rút & Độ Bền Màu)</h2>
           <p className="text-sm text-rose-100 mt-1 max-w-xl">
-            Đánh giá theo QC Profile của từng đơn (BR-19), kiểm soát vòng rework tối đa 3 lần (BR-10) và tuân thủ phân tách trách nhiệm (BR-11).
+            Kiểm tra theo đúng tiêu chuẩn chất lượng từng mã hàng, giới hạn tối đa 3 lần sửa chữa và đảm bảo kiểm định độc lập khách quan.
           </p>
         </div>
       </div>
@@ -139,8 +139,8 @@ export const QCInspectorView: React.FC<QCInspectorViewProps> = ({
                   onChange={(e) => setStepCode(e.target.value)}
                   className="w-full border border-slate-300 rounded-xl p-2 bg-slate-50 font-bold"
                 >
-                  <option value="FINAL_QC">FINAL_QC (Kiểm định cuối kỳ trước đóng gói)</option>
-                  <option value="FABRIC_INSPECT">FABRIC_INSPECT (Kiểm vải đầu vào)</option>
+                  <option value="FINAL_QC">Kiểm tra thành phẩm xuất xưởng (Trước khi đóng thùng)</option>
+                  <option value="FABRIC_INSPECT">Kiểm tra chất lượng vải mộc nhập kho</option>
                 </select>
               </div>
             </div>
@@ -178,7 +178,7 @@ export const QCInspectorView: React.FC<QCInspectorViewProps> = ({
 
             {/* Decision Buttons */}
             <div>
-              <label className="block font-bold text-slate-700 mb-1">Quyết Định Của QC Inspector</label>
+              <label className="block font-bold text-slate-700 mb-1">Kết Luận Kiểm Định Chất Lượng</label>
               <div className="grid grid-cols-3 gap-3">
                 <button
                   type="button"
@@ -190,7 +190,7 @@ export const QCInspectorView: React.FC<QCInspectorViewProps> = ({
                   }`}
                 >
                   <CheckCircle className="w-5 h-5 text-emerald-600" />
-                  <span>PASS (Đạt)</span>
+                  <span>ĐẠT CHUẨN</span>
                 </button>
 
                 <button
@@ -203,7 +203,7 @@ export const QCInspectorView: React.FC<QCInspectorViewProps> = ({
                   }`}
                 >
                   <RotateCcw className="w-5 h-5 text-amber-600" />
-                  <span>REWORK (Sửa Lại)</span>
+                  <span>TRẢ VỀ SỬA LẠI</span>
                 </button>
 
                 <button
@@ -216,16 +216,16 @@ export const QCInspectorView: React.FC<QCInspectorViewProps> = ({
                   }`}
                 >
                   <XCircle className="w-5 h-5 text-rose-600" />
-                  <span>REJECT (Hủy Lô)</span>
+                  <span>PHẾ PHẨM / HỦY BỎ</span>
                 </button>
               </div>
             </div>
 
-            {/* Rework Routing Selection (BR-10) */}
+            {/* Rework Routing Selection */}
             {result === 'REWORK' && (
               <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl space-y-2">
                 <label className="block font-bold text-amber-900">
-                  Điều Hướng Trả Về Công Đoạn Khắc Phục (BR-10):
+                  Chuyển trả về công đoạn để sửa chữa:
                 </label>
                 <select
                   value={targetStepCodeForRework}
@@ -237,7 +237,7 @@ export const QCInspectorView: React.FC<QCInspectorViewProps> = ({
                   <option value="EFFECT_WASH">Wash Hiệu Ứng (Wash mài lại)</option>
                 </select>
                 <div className="text-[11px] text-amber-800">
-                  * BR-10: Hệ thống giới hạn tối đa 3 vòng Rework. Nếu vượt quá, đơn hàng sẽ chuyển sang cho Planner xử lý ngoại lệ.
+                  * Lưu ý: Mỗi bó hàng chỉ được phép sửa lại tối đa 3 lần. Nếu vẫn không đạt, sản phẩm sẽ được chuyển cán bộ kế hoạch xử lý.
                 </div>
               </div>
             )}
@@ -264,15 +264,15 @@ export const QCInspectorView: React.FC<QCInspectorViewProps> = ({
 
         {/* Applied QC Profile Card */}
         <div className="qc-card bg-white rounded-2xl border border-slate-200/90 p-6 shadow-sm space-y-4 text-xs">
-          <h3 className="font-extrabold text-slate-900 text-base">Hồ Sơ QC Áp Dụng (BR-19)</h3>
+          <h3 className="font-extrabold text-slate-900 text-base">Tiêu Chuẩn Chất Lượng Áp Dụng</h3>
 
           <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/60 space-y-3">
             <div>
-              <div className="text-slate-400 font-semibold uppercase text-[10px]">Tên Profile</div>
-              <div className="text-base font-extrabold text-slate-900 mt-0.5">{profileType}</div>
+              <div className="text-slate-400 font-semibold uppercase text-[10px]">Tên Tiêu Chuẩn</div>
+              <div className="text-base font-extrabold text-slate-900 mt-0.5">{profileType === 'SKIP_CLEAN_WASH' ? 'Bỏ Qua Giặt Sạch' : 'Quy Trình Chuẩn (Đầy Đủ)'}</div>
               <p className="text-slate-500 mt-1">
                 {selectedOrder?.skipCleanWash
-                  ? 'Đơn hàng bỏ qua bước Giặt Sạch, áp dụng ngưỡng co rút nới lỏng theo thỏa thuận văn bản khách ký (BR-19).'
+                  ? 'Đơn hàng bỏ qua bước Giặt Sạch, áp dụng ngưỡng co rút nới lỏng theo thỏa thuận văn bản khách ký.'
                   : 'Đơn hàng chạy đầy đủ chu trình giặt sạch ổn định sợi.'}
               </p>
             </div>
