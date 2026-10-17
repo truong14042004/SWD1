@@ -5,6 +5,7 @@ import { useGSAP } from '@gsap/react';
 import { animateStaggerCards } from '@/lib/animations';
 import { ProductionOrder } from '@/types';
 import { Plus, CheckCircle, Clock, AlertCircle, FileText, ChevronRight, Play, Pause, XCircle } from 'lucide-react';
+import { FileUpload } from '@/components/ui/FileUpload';
 
 interface ProductionPlannerViewProps {
   orders: ProductionOrder[];
@@ -356,23 +357,30 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
                 </label>
 
                 {skipCleanWash && (
-                  <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg space-y-2 text-xs">
-                    <div className="font-bold text-purple-900">BR-19: Bắt buộc tệp văn bản khách ký xác nhận</div>
-                    <input
-                      type="text"
-                      placeholder="URL/File văn bản khách ký (VD: /docs/waiver-signed.pdf)"
+                  <div className="p-4 bg-purple-50/80 border border-purple-200/90 rounded-2xl space-y-3 text-xs">
+                    <FileUpload
+                      label="BR-19: Tệp Văn Bản Khách Ký Xác Nhận (Waiver Bỏ Giặt Sạch)"
+                      helperText="Bấm để chọn tệp từ máy tính (PDF, Scan ảnh, Word) hoặc kéo thả vào đây"
+                      accept=".pdf,.png,.jpg,.jpeg,.docx"
                       value={ackFileUrl}
-                      onChange={(e) => setAckFileUrl(e.target.value)}
-                      className="w-full bg-white border border-purple-300 rounded-lg p-1.5"
+                      onChange={(fileUrl) => setAckFileUrl(fileUrl)}
+                      sampleTemplateUrl="/docs/waiver-raw-denim-signed.pdf"
+                      sampleTemplateName="Bien_Ban_Thoa_Thuan_Mien_Tru_Co_Rut_Denim_Signed.pdf"
                       required
                     />
-                    <input
-                      type="text"
-                      placeholder="Người đại diện khách hàng ký"
-                      value={ackBy}
-                      onChange={(e) => setAckBy(e.target.value)}
-                      className="w-full bg-white border border-purple-300 rounded-lg p-1.5"
-                    />
+
+                    <div>
+                      <label className="block font-bold text-slate-700 mb-1">
+                        Họ tên người đại diện khách hàng ký xác nhận
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="VD: Nguyễn Văn Đại Diện - Giám Đốc Nhãn Hàng"
+                        value={ackBy}
+                        onChange={(e) => setAckBy(e.target.value)}
+                        className="w-full bg-white border border-purple-300 rounded-xl p-2 text-xs focus:ring-2 focus:ring-purple-500 outline-none"
+                      />
+                    </div>
                   </div>
                 )}
               </div>

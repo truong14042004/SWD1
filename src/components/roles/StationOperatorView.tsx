@@ -5,6 +5,7 @@ import { useGSAP } from '@gsap/react';
 import { animateStaggerCards } from '@/lib/animations';
 import { ProductionOrder, StationType } from '@/types';
 import { Scissors, Play, Check, AlertCircle, FileUp, CheckCircle, ShieldAlert, Lock, Unlock } from 'lucide-react';
+import { FileUpload } from '@/components/ui/FileUpload';
 
 interface StationOperatorViewProps {
   orders: ProductionOrder[];
@@ -308,23 +309,29 @@ export const StationOperatorView: React.FC<StationOperatorViewProps> = ({
               </div>
 
               {completeModalData.requiresEvidence && (
-                <div className="p-3 bg-purple-50 border border-purple-200 rounded-xl space-y-2">
-                  <div className="font-bold text-purple-900">BR-15: Bắt buộc minh chứng hình ảnh/phiếu</div>
-                  <input
-                    type="text"
-                    placeholder="URL ảnh hoặc phiếu nghiệm thu..."
+                <div className="p-3 bg-purple-50/80 border border-purple-200 rounded-2xl space-y-2">
+                  <FileUpload
+                    label="BR-15: Minh Chứng Hình Ảnh / Phiếu Nghiệm Thu"
+                    helperText="Chọn ảnh chụp thực tế hoặc phiếu nghiệm thu từ thiết bị"
+                    accept=".png,.jpg,.jpeg,.pdf,.webp"
+                    uploadFolder="evidences"
                     value={evidenceUrl}
-                    onChange={(e) => setEvidenceUrl(e.target.value)}
-                    className="w-full bg-white border border-purple-300 rounded-lg p-1.5"
+                    onChange={(url) => setEvidenceUrl(url)}
+                    sampleTemplateUrl="/docs/waiver-raw-denim-signed.pdf"
+                    sampleTemplateName="Anh_Chup_Nghiem_Thu_Cong_Doan.jpg"
                     required
                   />
-                  <input
-                    type="text"
-                    placeholder="Ghi chú thêm..."
-                    value={evidenceNote}
-                    onChange={(e) => setEvidenceNote(e.target.value)}
-                    className="w-full bg-white border border-purple-300 rounded-lg p-1.5"
-                  />
+
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">Ghi chú công đoạn</label>
+                    <input
+                      type="text"
+                      placeholder="Ghi chú thêm về thông số, tình trạng máy..."
+                      value={evidenceNote}
+                      onChange={(e) => setEvidenceNote(e.target.value)}
+                      className="w-full bg-white border border-purple-300 rounded-xl p-2 text-xs focus:ring-2 focus:ring-purple-500 outline-none"
+                    />
+                  </div>
                 </div>
               )}
 
