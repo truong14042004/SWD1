@@ -16,8 +16,11 @@ import {
   Box,
   ClipboardList,
   ArrowLeft,
+  Eye,
+  FileCheck,
 } from 'lucide-react';
 import { FileUpload } from '@/components/ui/FileUpload';
+import { FilePreviewModal } from '@/components/ui/FilePreviewModal';
 
 interface ProductionPlannerViewProps {
   orders: ProductionOrder[];
@@ -48,6 +51,12 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [previewData, setPreviewData] = useState<{
+    isOpen: boolean;
+    fileUrl: string;
+    fileName?: string;
+    title?: string;
+  } | null>(null);
 
   // New order form fields
   const [styleId, setStyleId] = useState(catalog?.styles?.[0]?.id || '');
@@ -518,8 +527,28 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
                   </div>
 
                   {order.skipCleanWash && (
-                    <div className="p-2 bg-purple-50 border border-purple-200 rounded-lg text-[11px] text-purple-800 font-medium">
-                      ✓ Đã đính kèm văn bản khách ký xác nhận bỏ giặt sạch (BR-19)
+                    <div className="p-2.5 bg-purple-50/90 border border-purple-200 rounded-xl text-[11px] text-purple-900 font-medium flex items-center justify-between">
+                      <span className="flex items-center space-x-1.5 truncate">
+                        <FileCheck className="w-3.5 h-3.5 text-purple-600 flex-shrink-0" />
+                        <span className="truncate">Văn bản khách ký (BR-19)</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setPreviewData({
+                            isOpen: true,
+                            fileUrl:
+                              order.acknowledgement?.fileUrl ||
+                              '/docs/waiver-raw-denim-signed.pdf',
+                            fileName: `Waiver_${order.orderNumber}_Signed.pdf`,
+                            title: `Văn Bản Khách Ký Bỏ Giặt Sạch (BR-19) — Đơn ${order.orderNumber}`,
+                          })
+                        }
+                        className="px-2.5 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-bold text-[10px] shadow-2xs transition flex items-center space-x-1 flex-shrink-0 ml-1.5"
+                      >
+                        <Eye className="w-3 h-3" />
+                        <span>Xem tệp</span>
+                      </button>
                     </div>
                   )}
 
@@ -659,6 +688,17 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
             </div>
           </div>
         </div>
+      )}
+
+      {/* File Preview Modal */}
+      {previewData && (
+        <FilePreviewModal
+          isOpen={previewData.isOpen}
+          onClose={() => setPreviewData(null)}
+          fileUrl={previewData.fileUrl}
+          fileName={previewData.fileName}
+          title={previewData.title}
+        />
       )}
     </div>
   );

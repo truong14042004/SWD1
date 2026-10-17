@@ -2,7 +2,9 @@
 
 import React, { useState } from 'react';
 import { ProductionOrder, UserRole } from '@/types';
-import { Plus, CheckCircle, FileText, AlertCircle, PackageCheck, Eye, Layers } from 'lucide-react';
+import { Plus, CheckCircle, FileText, AlertCircle, PackageCheck, Eye, Layers, FileCheck } from 'lucide-react';
+import { FileUpload } from '@/components/ui/FileUpload';
+import { FilePreviewModal } from '@/components/ui/FilePreviewModal';
 
 interface OrdersTabProps {
   orders: ProductionOrder[];
@@ -21,6 +23,12 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
   const [selectedOrder, setSelectedOrder] = useState<ProductionOrder | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [previewData, setPreviewData] = useState<{
+    isOpen: boolean;
+    fileUrl: string;
+    fileName?: string;
+    title?: string;
+  } | null>(null);
 
   // Form State for New Order
   const [styleId, setStyleId] = useState(catalog?.styles[0]?.id || '');
@@ -386,28 +394,30 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
                 </label>
 
                 {skipCleanWash && (
-                  <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg space-y-2 text-xs">
-                    <div className="font-bold text-purple-900">
-                      Ràng buộc BR-19: Bắt buộc văn bản khách ký xác nhận
-                    </div>
-                    <p className="text-purple-700">
-                      Do bỏ giặt sạch, sản phẩm chưa ổn định co rút. QC cuối sẽ chuyển sang dùng Profile <strong>SKIP_CLEAN_WASH</strong> với ngưỡng co rút riêng.
-                    </p>
-                    <input
-                      type="text"
-                      placeholder="URL hoặc Tên file đính kèm văn bản khách ký (VD: /docs/waiver-signed.pdf)"
+                  <div className="p-4 bg-purple-50/80 border border-purple-200 rounded-2xl space-y-3 text-xs">
+                    <FileUpload
+                      label="Ràng buộc BR-19: Tệp Văn Bản Khách Ký Xác Nhận (Waiver)"
+                      helperText="Do bỏ giặt sạch, sản phẩm chưa ổn định co rút. Bắt buộc tệp khách ký để áp dụng Profile SKIP_CLEAN_WASH."
+                      accept=".pdf,.png,.jpg,.jpeg,.docx"
                       value={ackFileUrl}
-                      onChange={(e) => setAckFileUrl(e.target.value)}
-                      className="w-full bg-white border border-purple-300 rounded p-1.5 focus:ring-2 focus:ring-purple-500"
+                      onChange={(fileUrl) => setAckFileUrl(fileUrl)}
+                      sampleTemplateUrl="/docs/waiver-raw-denim-signed.pdf"
+                      sampleTemplateName="Bien_Ban_Thoa_Thuan_Mien_Tru_Co_Rut_Denim_Signed.pdf"
                       required
                     />
-                    <input
-                      type="text"
-                      placeholder="Người đại diện khách hàng ký (VD: Brand Buyer DenimLab)"
-                      value={ackBy}
-                      onChange={(e) => setAckBy(e.target.value)}
-                      className="w-full bg-white border border-purple-300 rounded p-1.5 focus:ring-2 focus:ring-purple-500"
-                    />
+
+                    <div>
+                      <label className="block font-bold text-slate-700 mb-1">
+                        Người đại diện khách hàng ký (VD: Brand Buyer DenimLab)
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Họ tên người ký"
+                        value={ackBy}
+                        onChange={(e) => setAckBy(e.target.value)}
+                        className="w-full bg-white border border-purple-300 rounded-xl p-2 focus:ring-2 focus:ring-purple-500"
+                      />
+                    </div>
                   </div>
                 )}
               </div>
@@ -530,15 +540,47 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
 
             {/* Customer Acknowledgement if Skip Clean Wash */}
             {selectedOrder.acknowledgement && (
-              <div className="p-3 bg-purple-50 border border-purple-200 rounded-xl text-xs space-y-1">
-                <div className="font-bold text-purple-900">Văn Bản Khách Hàng Xác Nhận Bỏ Giặt Sạch (BR-19)</div>
+              <div className="p-3.5 bg-purple-50/90 border border-purple-200 rounded-2xl text-xs space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="font-extrabold text-purple-900 flex items-center space-x-1.5">
+                    <FileCheck className="w-4 h-4 text-purple-600" />
+                    <span>Văn Bản Khách Hàng Xác Nhận Bỏ Giặt Sạch (BR-19)</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setPreviewData({
+                        isOpen: true,
+                        fileUrl:
+                          selectedOrder.acknowledgement?.fileUrl ||
+                          '/docs/waiver-raw-denim-signed.pdf',
+                        fileName: `Waiver_${selectedOrder.orderNumber}_Signed.pdf`,
+                        title: `Văn Bản Khách Ký Xác Nhận Bỏ Giặt Sạch (BR-19) — Đơn ${selectedOrder.orderNumber}`,
+                      })
+                    }
+                    className="px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold text-xs shadow-2xs transition flex items-center space-x-1"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Xem Tệp Đính Kèm</span>
+                  </button>
+                </div>
                 <div>Đại diện ký: <strong>{selectedOrder.acknowledgement.acknowledgedBy}</strong></div>
-                <div>Tệp đính kèm: <span className="font-mono text-purple-700 underline">{selectedOrder.acknowledgement.fileUrl}</span></div>
-                <div>Áp dụng Profile: <strong>SKIP_CLEAN_WASH</strong></div>
+                <div>Áp dụng Profile: <strong className="text-purple-700">SKIP_CLEAN_WASH (Ngưỡng co rút riêng)</strong></div>
               </div>
             )}
           </div>
         </div>
+      )}
+
+      {/* File Preview Modal */}
+      {previewData && (
+        <FilePreviewModal
+          isOpen={previewData.isOpen}
+          onClose={() => setPreviewData(null)}
+          fileUrl={previewData.fileUrl}
+          fileName={previewData.fileName}
+          title={previewData.title}
+        />
       )}
     </div>
   );
