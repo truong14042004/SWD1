@@ -211,6 +211,33 @@ export interface ProductionOrder {
   bomLines: BomLine[];
   allocations: MaterialAllocation[];
   acknowledgement?: CustomerAcknowledgement;
+  // PayOS Payment Integration Fields
+  totalAmount?: number;
+  depositAmount?: number;
+  paidAmount?: number;
+  paymentStatus?: PaymentStatus;
+  paymentLinkId?: string;
+  payosOrderCode?: number;
+  paymentQrUrl?: string;
+  paymentCheckoutUrl?: string;
+  paymentTransactions?: PaymentTransaction[];
+}
+
+export type PaymentStatus = 'UNPAID' | 'DEPOSIT_PAID' | 'FULLY_PAID';
+export type PaymentStage = 'DEPOSIT' | 'FINAL_SETTLEMENT';
+
+export interface PaymentTransaction {
+  id: string;
+  stage: PaymentStage;
+  amount: number;
+  orderCode: number;
+  paymentLinkId?: string;
+  transactionTime: string;
+  method: 'PAYOS_VIETQR';
+  status: 'PAID' | 'PENDING' | 'CANCELLED';
+  reference?: string;
+  accountNumber?: string;
+  bankName?: string;
 }
 
 export interface Evidence {
@@ -297,7 +324,7 @@ export interface WorkflowChangeRequest {
 
 export interface AuditLog {
   id: string;
-  entityType: 'ORDER' | 'WORKFLOW' | 'STEP' | 'QC' | 'ALLOCATION';
+  entityType: 'ORDER' | 'WORKFLOW' | 'STEP' | 'QC' | 'ALLOCATION' | 'PAYMENT';
   entityId: string;
   action: string;
   oldValue?: string;

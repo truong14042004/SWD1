@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import { ProductionOrder, UserRole } from '@/types';
-import { Plus, CheckCircle, FileText, AlertCircle, PackageCheck, Eye, Layers, FileCheck } from 'lucide-react';
+import { Plus, CheckCircle, FileText, AlertCircle, PackageCheck, Eye, Layers, FileCheck, QrCode, Receipt, CheckCircle2, CreditCard, Clock } from 'lucide-react';
 import { FileUpload } from '@/components/ui/FileUpload';
 import { FilePreviewModal } from '@/components/ui/FilePreviewModal';
+import { PaymentModal } from '@/components/payment/PaymentModal';
 
 interface OrdersTabProps {
   orders: ProductionOrder[];
@@ -29,6 +30,17 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
     fileName?: string;
     title?: string;
   } | null>(null);
+
+  // PayOS Payment Modal State
+  const [paymentModalState, setPaymentModalState] = useState<{
+    isOpen: boolean;
+    order: ProductionOrder | null;
+    stage: 'DEPOSIT' | 'FINAL_SETTLEMENT';
+  }>({
+    isOpen: false,
+    order: null,
+    stage: 'DEPOSIT',
+  });
 
   // Form State for New Order
   const [styleId, setStyleId] = useState(catalog?.styles[0]?.id || '');
@@ -199,6 +211,7 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
                 <th className="py-3 px-4">Số Lượng</th>
                 <th className="py-3 px-4">Hạn Giao</th>
                 <th className="py-3 px-4">Quy Trình & QC Profile</th>
+                <th className="py-3 px-4">Thanh Toán (PayOS)</th>
                 <th className="py-3 px-4">Trạng Thái</th>
                 <th className="py-3 px-4 text-right">Thao Tác</th>
               </tr>
@@ -234,6 +247,24 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
                       )}
                     </td>
                     <td className="py-3.5 px-4">
+                      {order.paymentStatus === 'DEPOSIT_PAID' ? (
+                        <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full font-bold text-xs bg-emerald-100 text-emerald-800">
+                          <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                          <span>Đã cọc 50%</span>
+                        </span>
+                      ) : order.paymentStatus === 'FULLY_PAID' ? (
+                        <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full font-bold text-xs bg-teal-100 text-teal-800">
+                          <CheckCircle2 className="w-3 h-3 text-teal-600" />
+                          <span>Đã tất toán 100%</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full font-bold text-xs bg-amber-100 text-amber-800">
+                          <Clock className="w-3 h-3 text-amber-600" />
+                          <span>Chưa đặt cọc</span>
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-3.5 px-4">
                       <span
                         className={`text-xs px-2.5 py-1 rounded-full font-bold ${
                           order.status === 'IN_PRODUCTION'
@@ -248,7 +279,7 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
                         {order.status}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-right space-x-2">
+                    <td className="py-3.5 px-4 text-right space-x-1.5">
                       <button
                         onClick={() => setSelectedOrder(order)}
                         className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded font-medium transition"
@@ -256,12 +287,46 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
                         Chi tiết
                       </button>
 
+                      {order.status === 'DRAFT' && order.paymentStatus !== 'DEPOSIT_PAID' && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setPaymentModalState({
+                              isOpen: true,
+                              order,
+                              stage: 'DEPOSIT',
+                            })
+                          }
+                          className="text-xs bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-2.5 py-1 rounded font-semibold shadow-xs transition inline-flex items-center space-x-1"
+                        >
+                          <QrCode className="w-3 h-3" />
+                          <span>Cọc PayOS</span>
+                        </button>
+                      )}
+
+                      {order.paymentStatus === 'DEPOSIT_PAID' && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setPaymentModalState({
+                              isOpen: true,
+                              order,
+                              stage: 'DEPOSIT',
+                            })
+                          }
+                          className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded font-medium transition inline-flex items-center space-x-1"
+                        >
+                          <Receipt className="w-3 h-3 text-emerald-600" />
+                          <span>Biên lai</span>
+                        </button>
+                      )}
+
                       {order.status === 'DRAFT' && (
                         <button
                           onClick={() => handleConfirmOrder(order.id)}
                           className="text-xs bg-denim-600 hover:bg-denim-700 text-white px-2.5 py-1 rounded font-medium transition"
                         >
-                          Confirm (BR-03)
+                          Confirm
                         </button>
                       )}
                     </td>
@@ -484,6 +549,87 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
               </button>
             </div>
 
+            {/* PayOS Financial & Deposit Card */}
+            <div className="p-4 bg-gradient-to-r from-denim-50 to-indigo-50/50 border border-denim-200 rounded-2xl text-xs space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <CreditCard className="w-4 h-4 text-denim-600" />
+                  <span className="font-extrabold text-slate-900 text-sm">Cổng Thanh Toán PayOS (VietQR)</span>
+                </div>
+                {selectedOrder.paymentStatus === 'DEPOSIT_PAID' ? (
+                  <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Đã cọc 50%</span>
+                  </span>
+                ) : selectedOrder.paymentStatus === 'FULLY_PAID' ? (
+                  <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-teal-100 text-teal-800 font-bold text-xs">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-teal-600" />
+                    <span>Đã thanh toán 100%</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold text-xs">
+                    <Clock className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Chưa đặt cọc</span>
+                  </span>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-white p-3 rounded-xl border border-denim-100">
+                <div>
+                  <div className="text-[10px] text-slate-400 font-bold uppercase">Tổng đơn hàng</div>
+                  <div className="font-bold text-slate-800">
+                    {(selectedOrder.totalAmount || 75000000).toLocaleString('vi-VN')} ₫
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-slate-400 font-bold uppercase">Tiền cọc (50%)</div>
+                  <div className="font-bold text-denim-600">
+                    {(selectedOrder.depositAmount || 37500000).toLocaleString('vi-VN')} ₫
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-slate-400 font-bold uppercase">Đã thanh toán</div>
+                  <div className="font-bold text-emerald-600">
+                    {(selectedOrder.paidAmount || 0).toLocaleString('vi-VN')} ₫
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-slate-400 font-bold uppercase">Còn lại</div>
+                  <div className="font-bold text-slate-700">
+                    {Math.max(
+                      0,
+                      (selectedOrder.totalAmount || 75000000) - (selectedOrder.paidAmount || 0)
+                    ).toLocaleString('vi-VN')}{' '}
+                    ₫
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setPaymentModalState({
+                      isOpen: true,
+                      order: selectedOrder,
+                      stage:
+                        selectedOrder.paymentStatus === 'DEPOSIT_PAID'
+                          ? 'FINAL_SETTLEMENT'
+                          : 'DEPOSIT',
+                    })
+                  }
+                  className="px-4 py-2 bg-gradient-to-r from-denim-600 to-indigo-600 hover:from-denim-700 hover:to-indigo-700 text-white font-bold rounded-xl text-xs shadow-sm transition flex items-center space-x-1.5"
+                >
+                  <QrCode className="w-3.5 h-3.5" />
+                  <span>
+                    {selectedOrder.paymentStatus === 'DEPOSIT_PAID'
+                      ? 'Quyết toán 100% (PayOS)'
+                      : 'Mở VietQR Thanh Toán (PayOS)'}
+                  </span>
+                </button>
+              </div>
+            </div>
+
             {/* BOM and Allocations */}
             <div>
               <h4 className="text-xs font-bold text-slate-700 uppercase mb-2">Định Mức Vật Tư (BOM & Allocations - BR-06)</h4>
@@ -582,6 +728,22 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
           title={previewData.title}
         />
       )}
+
+      {/* PayOS Payment Modal */}
+      <PaymentModal
+        isOpen={paymentModalState.isOpen}
+        order={paymentModalState.order}
+        stage={paymentModalState.stage}
+        onClose={() =>
+          setPaymentModalState({ isOpen: false, order: null, stage: 'DEPOSIT' })
+        }
+        onPaymentSuccess={() => {
+          setSuccessMessage(
+            'Thanh toán PayOS thành công! Hệ thống đã ghi nhận tiền cọc, tự động xác nhận đơn và snapshot quy trình (BR-03).'
+          );
+          onRefresh();
+        }}
+      />
     </div>
   );
 };

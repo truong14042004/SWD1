@@ -18,9 +18,14 @@ import {
   ArrowLeft,
   Eye,
   FileCheck,
+  CreditCard,
+  QrCode,
+  Receipt,
+  CheckCircle2,
 } from 'lucide-react';
 import { FileUpload } from '@/components/ui/FileUpload';
 import { FilePreviewModal } from '@/components/ui/FilePreviewModal';
+import { PaymentModal } from '@/components/payment/PaymentModal';
 
 interface ProductionPlannerViewProps {
   orders: ProductionOrder[];
@@ -42,6 +47,17 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
     initialAction || 'pipeline'
   );
   const [selectedOrder, setSelectedOrder] = useState<ProductionOrder | null>(null);
+
+  // PayOS Payment Modal State
+  const [paymentModalState, setPaymentModalState] = useState<{
+    isOpen: boolean;
+    order: ProductionOrder | null;
+    stage: 'DEPOSIT' | 'FINAL_SETTLEMENT';
+  }>({
+    isOpen: false,
+    order: null,
+    stage: 'DEPOSIT',
+  });
 
   useEffect(() => {
     if (initialAction) {
@@ -524,6 +540,25 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
                         {order.skipCleanWash ? 'SKIP_CLEAN_WASH (BR-19)' : 'FULL_PROCESS'}
                       </span>
                     </div>
+                    <div className="flex justify-between items-center pt-1 border-t border-slate-200/60">
+                      <span className="text-slate-500">Thanh toán (PayOS):</span>
+                      {order.paymentStatus === 'DEPOSIT_PAID' ? (
+                        <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-bold text-[10px]">
+                          <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                          <span>Đã cọc 50%</span>
+                        </span>
+                      ) : order.paymentStatus === 'FULLY_PAID' ? (
+                        <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md bg-teal-100 text-teal-800 font-bold text-[10px]">
+                          <CheckCircle2 className="w-3 h-3 text-teal-600" />
+                          <span>Đã quyết toán 100%</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 font-bold text-[10px]">
+                          <Clock className="w-3 h-3 text-amber-600" />
+                          <span>Chưa đặt cọc</span>
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   {order.skipCleanWash && (
@@ -557,18 +592,56 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
                       onClick={() => setSelectedOrder(order)}
                       className="text-xs font-semibold text-slate-600 hover:text-denim-600"
                     >
-                      Xem định mức BOM →
+                      BOM định mức →
                     </button>
 
-                    {order.status === 'DRAFT' && (
-                      <button
-                        onClick={() => handleConfirmOrder(order.id)}
-                        className="bg-denim-600 hover:bg-denim-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs shadow transition flex items-center space-x-1"
-                      >
-                        <CheckCircle className="w-3.5 h-3.5" />
-                        <span>Confirm (BR-03)</span>
-                      </button>
-                    )}
+                    <div className="flex items-center space-x-1.5">
+                      {order.status === 'DRAFT' && order.paymentStatus !== 'DEPOSIT_PAID' && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setPaymentModalState({
+                              isOpen: true,
+                              order,
+                              stage: 'DEPOSIT',
+                            })
+                          }
+                          className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold px-2.5 py-1.5 rounded-lg text-xs shadow-xs transition flex items-center space-x-1"
+                          title="Thanh toán cọc 50% bằng VietQR qua PayOS"
+                        >
+                          <QrCode className="w-3.5 h-3.5" />
+                          <span>Cọc PayOS</span>
+                        </button>
+                      )}
+
+                      {order.paymentStatus === 'DEPOSIT_PAID' && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setPaymentModalState({
+                              isOpen: true,
+                              order,
+                              stage: 'DEPOSIT',
+                            })
+                          }
+                          className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-2 py-1.5 rounded-lg text-xs transition flex items-center space-x-1"
+                          title="Xem thông tin biên lai chuyển khoản PayOS"
+                        >
+                          <Receipt className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Biên lai</span>
+                        </button>
+                      )}
+
+                      {order.status === 'DRAFT' && (
+                        <button
+                          onClick={() => handleConfirmOrder(order.id)}
+                          className="bg-denim-600 hover:bg-denim-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs shadow transition flex items-center space-x-1"
+                        >
+                          <CheckCircle className="w-3.5 h-3.5" />
+                          <span>Confirm</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               );
@@ -700,6 +773,22 @@ export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
           title={previewData.title}
         />
       )}
+
+      {/* PayOS Payment Modal */}
+      <PaymentModal
+        isOpen={paymentModalState.isOpen}
+        order={paymentModalState.order}
+        stage={paymentModalState.stage}
+        onClose={() =>
+          setPaymentModalState({ isOpen: false, order: null, stage: 'DEPOSIT' })
+        }
+        onPaymentSuccess={() => {
+          setSuccessMessage(
+            'Thanh toán PayOS thành công! Hệ thống đã ghi nhận tiền cọc, tự động xác nhận đơn và snapshot quy trình (BR-03).'
+          );
+          onRefresh();
+        }}
+      />
     </div>
   );
 };

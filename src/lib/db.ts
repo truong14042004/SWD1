@@ -227,6 +227,10 @@ class DatabaseStore {
     const bomStrategy = new StandardJeanBomStrategy();
     const bomLines = bomStrategy.calculateBom(data.sizeLines, {});
 
+    const totalQty = data.sizeLines.reduce((sum, l) => sum + l.plannedQty, 0);
+    const totalAmount = totalQty * 150000;
+    const depositAmount = Math.round(totalAmount * 0.5);
+
     const newOrder: ProductionOrder = {
       id: `ord-${Date.now()}`,
       orderNumber: data.orderNumber || `PO-${Date.now().toString().slice(-4)}`,
@@ -248,6 +252,11 @@ class DatabaseStore {
       bomLines,
       allocations: [],
       acknowledgement,
+      totalAmount,
+      depositAmount,
+      paidAmount: 0,
+      paymentStatus: 'UNPAID',
+      paymentTransactions: [],
     };
 
     this.orders.unshift(newOrder);
@@ -578,6 +587,109 @@ class DatabaseStore {
     }
 
     return { success: true };
+  }
+
+  // --- PAYOS PAYMENT GATEWAY INTEGRATION ---
+  public setOrderPaymentInfo(
+    orderId: string,
+    info: {
+      orderCode: number;
+      paymentLinkId: string;
+      paymentQrUrl: string;
+      paymentCheckoutUrl: string;
+    }
+  ): ProductionOrder | null {
+    const order = this.orders.find((o) => o.id === orderId);
+    if (!order) return null;
+
+    order.payosOrderCode = info.orderCode;
+    order.paymentLinkId = info.paymentLinkId;
+    order.paymentQrUrl = info.paymentQrUrl;
+    order.paymentCheckoutUrl = info.paymentCheckoutUrl;
+
+    return order;
+  }
+
+  public getOrderByOrderCode(orderCode: number): ProductionOrder | undefined {
+    return this.orders.find((o) => o.payosOrderCode === orderCode);
+  }
+
+  public processPaymentSuccess(
+    orderCode: number,
+    amount: number,
+    reference: string,
+    stage: 'DEPOSIT' | 'FINAL_SETTLEMENT' = 'DEPOSIT',
+    actorId: string = 'system-payos'
+  ): { success: boolean; order?: ProductionOrder; error?: string } {
+    let order = this.getOrderByOrderCode(orderCode);
+    if (!order) {
+      // Fallback matching by orderNumber digits
+      order = this.orders.find((o) => {
+        const digits = o.orderNumber.replace(/\D/g, '');
+        return digits && String(orderCode).startsWith(digits);
+      });
+    }
+
+    if (!order) {
+      return { success: false, error: `Không tìm thấy đơn hàng tương ứng với orderCode ${orderCode}` };
+    }
+
+    const txId = `tx-${Date.now()}`;
+    const transaction = {
+      id: txId,
+      stage,
+      amount,
+      orderCode,
+      paymentLinkId: order.paymentLinkId,
+      transactionTime: new Date().toISOString(),
+      method: 'PAYOS_VIETQR' as const,
+      status: 'PAID' as const,
+      reference,
+      accountNumber: '03456789999',
+      bankName: 'MBBank',
+    };
+
+    if (!order.paymentTransactions) {
+      order.paymentTransactions = [];
+    }
+    order.paymentTransactions.push(transaction);
+
+    if (stage === 'DEPOSIT') {
+      order.paymentStatus = 'DEPOSIT_PAID';
+      order.paidAmount = (order.paidAmount || 0) + amount;
+
+      // Automatically confirm order and snapshot workflow if in DRAFT (BR-03)
+      if (order.status === 'DRAFT') {
+        this.confirmOrder(order.id, actorId);
+      }
+
+      this.auditLogs.unshift({
+        id: `aud-${Date.now()}`,
+        entityType: 'PAYMENT',
+        entityId: order.id,
+        action: 'DEPOSIT_PAID_VIA_PAYOS',
+        oldValue: 'UNPAID',
+        newValue: `Đã cọc ${amount.toLocaleString('vi-VN')} VND qua VietQR PayOS (Mã GD: ${reference})`,
+        actorId,
+        createdAt: new Date().toISOString(),
+      });
+    } else {
+      order.paymentStatus = 'FULLY_PAID';
+      order.paidAmount = order.totalAmount || (order.paidAmount || 0) + amount;
+
+      this.auditLogs.unshift({
+        id: `aud-${Date.now()}`,
+        entityType: 'PAYMENT',
+        entityId: order.id,
+        action: 'FINAL_SETTLEMENT_PAID_VIA_PAYOS',
+        oldValue: 'DEPOSIT_PAID',
+        newValue: `Đã quyết toán toàn bộ ${amount.toLocaleString('vi-VN')} VND qua VietQR PayOS (Mã GD: ${reference})`,
+        actorId,
+        createdAt: new Date().toISOString(),
+      });
+    }
+
+    return { success: true, order };
   }
 
   // --- WORKFLOW TEMPLATE METHODS ---

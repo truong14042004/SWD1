@@ -171,6 +171,24 @@ export const INITIAL_ORDERS: ProductionOrder[] = [
     allocations: [
       { id: 'al-1', bomLineId: 'bom-1', fabricLotId: 'lot-101', allocatedQty: 1140 },
     ],
+    totalAmount: 112500000, // 750 pcs * 150,000 VND
+    depositAmount: 56250000, // 50% cọc
+    paidAmount: 56250000,
+    paymentStatus: 'DEPOSIT_PAID',
+    paymentTransactions: [
+      {
+        id: 'tx-001',
+        stage: 'DEPOSIT',
+        amount: 56250000,
+        orderCode: 2026001,
+        transactionTime: '2026-10-15T09:15:00Z',
+        method: 'PAYOS_VIETQR',
+        status: 'PAID',
+        reference: 'MB-REF-992182',
+        accountNumber: '03456789999',
+        bankName: 'MBBank',
+      },
+    ],
   },
   {
     id: 'ord-002',
@@ -199,6 +217,24 @@ export const INITIAL_ORDERS: ProductionOrder[] = [
     allocations: [
       { id: 'al-10', bomLineId: 'bom-10', fabricLotId: 'lot-201', allocatedQty: 456 },
     ],
+    totalAmount: 48000000, // 300 pcs * 160,000 VND
+    depositAmount: 24000000, // 50% cọc
+    paidAmount: 24000000,
+    paymentStatus: 'DEPOSIT_PAID',
+    paymentTransactions: [
+      {
+        id: 'tx-002',
+        stage: 'DEPOSIT',
+        amount: 24000000,
+        orderCode: 2026002,
+        transactionTime: '2026-10-16T14:45:00Z',
+        method: 'PAYOS_VIETQR',
+        status: 'PAID',
+        reference: 'MB-REF-448291',
+        accountNumber: '03456789999',
+        bankName: 'MBBank',
+      },
+    ],
     acknowledgement: {
       id: 'ack-002',
       orderId: 'ord-002',
@@ -209,6 +245,41 @@ export const INITIAL_ORDERS: ProductionOrder[] = [
       acknowledgedAt: '2026-10-16T15:00:00Z',
       recordedBy: 'u-planner',
     },
+  },
+  {
+    id: 'ord-003',
+    orderNumber: 'PO-2026-003',
+    styleId: 'sty-slim-wash',
+    fabricTypeId: 'fab-11oz-stretch',
+    colorId: 'col-vintage-blue',
+    washType: 'ENZYME_WASH',
+    dyeRequired: false,
+    dyeMode: 'TOTAL',
+    dyeSource: 'INTERNAL',
+    skipCleanWash: false,
+    qcProfileId: 'qc-prof-slim-full',
+    isCustom: false,
+    status: 'DRAFT',
+    dueDate: '2026-11-28T00:00:00Z',
+    createdBy: 'u-planner',
+    createdAt: '2026-10-17T08:00:00Z',
+    sizeLines: [
+      { size: '29', plannedQty: 100 },
+      { size: '30', plannedQty: 150 },
+      { size: '31', plannedQty: 150 },
+      { size: '32', plannedQty: 100 },
+    ],
+    bomLines: [
+      { id: 'bom-20', materialType: 'FABRIC', requiredQty: 760, unit: 'mét' },
+      { id: 'bom-21', materialType: 'BUTTON', requiredQty: 500, unit: 'cái' },
+      { id: 'bom-22', materialType: 'ZIPPER', requiredQty: 500, unit: 'cái' },
+    ],
+    allocations: [],
+    totalAmount: 75000000, // 500 pcs * 150,000 VND
+    depositAmount: 37500000, // 50% cọc
+    paidAmount: 0,
+    paymentStatus: 'UNPAID',
+    paymentTransactions: [],
   },
 ];
 
