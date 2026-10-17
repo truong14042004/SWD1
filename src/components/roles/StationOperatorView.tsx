@@ -9,6 +9,7 @@ import { Scissors, Play, Check, AlertCircle, FileUp, CheckCircle, ShieldAlert, L
 interface StationOperatorViewProps {
   orders: ProductionOrder[];
   onRefresh: () => void;
+  initialStation?: StationType;
 }
 
 const STATIONS: { type: StationType; label: string; desc: string }[] = [
@@ -21,9 +22,17 @@ const STATIONS: { type: StationType; label: string; desc: string }[] = [
   { type: 'PACKING', label: 'Đóng Gói & Xuất', desc: 'Đóng thùng, lập packing list & biên bản giao' },
 ];
 
-export const StationOperatorView: React.FC<StationOperatorViewProps> = ({ orders, onRefresh }) => {
+export const StationOperatorView: React.FC<StationOperatorViewProps> = ({
+  orders,
+  onRefresh,
+  initialStation,
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [activeStation, setActiveStation] = useState<StationType>('CUTTING');
+  const [activeStation, setActiveStation] = useState<StationType>(initialStation || 'CUTTING');
+
+  React.useEffect(() => {
+    if (initialStation) setActiveStation(initialStation);
+  }, [initialStation]);
 
   const [completeModalData, setCompleteModalData] = useState<{
     orderId: string;

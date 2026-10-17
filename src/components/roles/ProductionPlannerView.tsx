@@ -10,16 +10,24 @@ interface ProductionPlannerViewProps {
   orders: ProductionOrder[];
   catalog: any;
   onRefresh: () => void;
+  initialAction?: 'pipeline' | 'create' | 'bom';
 }
 
 export const ProductionPlannerView: React.FC<ProductionPlannerViewProps> = ({
   orders,
   catalog,
   onRefresh,
+  initialAction,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(initialAction === 'create');
   const [selectedOrder, setSelectedOrder] = useState<ProductionOrder | null>(null);
+
+  React.useEffect(() => {
+    if (initialAction === 'create') {
+      setShowCreateModal(true);
+    }
+  }, [initialAction]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 

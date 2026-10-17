@@ -10,17 +10,23 @@ interface QCInspectorViewProps {
   orders: ProductionOrder[];
   catalog: any;
   onRefresh: () => void;
+  initialResult?: 'PASS' | 'REWORK' | 'REJECT';
 }
 
 export const QCInspectorView: React.FC<QCInspectorViewProps> = ({
   orders,
   catalog,
   onRefresh,
+  initialResult,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [selectedOrderId, setSelectedOrderId] = useState<string>(orders[0]?.id || '');
   const [stepCode, setStepCode] = useState('FINAL_QC');
-  const [result, setResult] = useState<'PASS' | 'REWORK' | 'REJECT'>('PASS');
+  const [result, setResult] = useState<'PASS' | 'REWORK' | 'REJECT'>(initialResult || 'PASS');
+
+  React.useEffect(() => {
+    if (initialResult) setResult(initialResult);
+  }, [initialResult]);
   const [targetStepCodeForRework, setTargetStepCodeForRework] = useState('SEWING');
   const [shrinkageMeasured, setShrinkageMeasured] = useState(2.8);
   const [fadingLevelMeasured, setFadingLevelMeasured] = useState(2.0);

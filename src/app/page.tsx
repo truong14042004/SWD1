@@ -27,7 +27,7 @@ import { AuditTab } from '@/components/tabs/AuditTab';
 
 function AppContent() {
   const { currentUser, isAuthenticated, isReady } = useAuth();
-  const [activeView, setActiveView] = useState<MainViewType>('role-workspace');
+  const [activeView, setActiveView] = useState<MainViewType>('planner-pipeline');
   const [orders, setOrders] = useState<any[]>([]);
   const [catalog, setCatalog] = useState<any>(null);
   const [workflowData, setWorkflowData] = useState<any>(null);
@@ -35,6 +35,37 @@ function AppContent() {
   const [loading, setLoading] = useState(true);
 
   const mainContentRef = useRef<HTMLDivElement>(null);
+
+  // Set default view on login/role change
+  useEffect(() => {
+    if (currentUser) {
+      switch (currentUser.role) {
+        case 'ADMIN':
+          setActiveView('admin-matrix');
+          break;
+        case 'PROCESS_ENGINEER':
+          setActiveView('pe-designer');
+          break;
+        case 'PRODUCTION_PLANNER':
+          setActiveView('planner-pipeline');
+          break;
+        case 'WAREHOUSE_KEEPER':
+          setActiveView('warehouse-allocation');
+          break;
+        case 'STATION_OPERATOR':
+          setActiveView('operator-terminal');
+          break;
+        case 'QC_INSPECTOR':
+          setActiveView('qc-dashboard');
+          break;
+        case 'MANAGER':
+          setActiveView('manager-wip');
+          break;
+        default:
+          setActiveView('orders');
+      }
+    }
+  }, [currentUser?.role]);
 
   const fetchData = async () => {
     try {
@@ -89,6 +120,8 @@ function AppContent() {
     return <AuthPortal />;
   }
 
+  const role = currentUser.role;
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
       <Header />
@@ -108,74 +141,200 @@ function AppContent() {
             </div>
           ) : (
             <div ref={mainContentRef}>
-              {/* PRIMARY ROLE WORKSPACE */}
-              {activeView === 'role-workspace' && (
+              {/* ADMIN ROLE FUNCTIONAL SCREENS */}
+              {role === 'ADMIN' && (
                 <>
-                  {currentUser?.role === 'ADMIN' && (
-                    <AdminView catalog={catalog} auditLogs={auditLogs} onRefresh={fetchData} />
+                  {(activeView === 'admin-matrix' || activeView === 'role-workspace') && (
+                    <AdminView
+                      catalog={catalog}
+                      auditLogs={auditLogs}
+                      onRefresh={fetchData}
+                      initialSubTab="matrix"
+                    />
                   )}
-                  {currentUser?.role === 'PROCESS_ENGINEER' && (
+                  {activeView === 'admin-users' && (
+                    <AdminView
+                      catalog={catalog}
+                      auditLogs={auditLogs}
+                      onRefresh={fetchData}
+                      initialSubTab="users"
+                    />
+                  )}
+                  {activeView === 'audit' && (
+                    <AuditTab auditLogs={auditLogs} />
+                  )}
+                </>
+              )}
+
+              {/* PROCESS ENGINEER FUNCTIONAL SCREENS */}
+              {role === 'PROCESS_ENGINEER' && (
+                <>
+                  {(activeView === 'pe-designer' || activeView === 'role-workspace') && (
                     <ProcessEngineerView
                       workflowData={workflowData}
                       catalog={catalog}
                       onRefresh={fetchData}
+                      initialTab="designer"
                     />
                   )}
-                  {currentUser?.role === 'PRODUCTION_PLANNER' && (
+                  {activeView === 'pe-qc-profiles' && (
+                    <ProcessEngineerView
+                      workflowData={workflowData}
+                      catalog={catalog}
+                      onRefresh={fetchData}
+                      initialTab="qcProfiles"
+                    />
+                  )}
+                  {activeView === 'pe-custom-review' && (
+                    <ProcessEngineerView
+                      workflowData={workflowData}
+                      catalog={catalog}
+                      onRefresh={fetchData}
+                      initialTab="customReview"
+                    />
+                  )}
+                </>
+              )}
+
+              {/* PRODUCTION PLANNER FUNCTIONAL SCREENS */}
+              {role === 'PRODUCTION_PLANNER' && (
+                <>
+                  {(activeView === 'planner-pipeline' || activeView === 'role-workspace') && (
                     <ProductionPlannerView
                       orders={orders}
                       catalog={catalog}
                       onRefresh={fetchData}
+                      initialAction="pipeline"
                     />
                   )}
-                  {currentUser?.role === 'WAREHOUSE_KEEPER' && (
+                  {activeView === 'planner-create' && (
+                    <ProductionPlannerView
+                      orders={orders}
+                      catalog={catalog}
+                      onRefresh={fetchData}
+                      initialAction="create"
+                    />
+                  )}
+                  {activeView === 'planner-bom' && (
+                    <ProductionPlannerView
+                      orders={orders}
+                      catalog={catalog}
+                      onRefresh={fetchData}
+                      initialAction="bom"
+                    />
+                  )}
+                </>
+              )}
+
+              {/* WAREHOUSE KEEPER FUNCTIONAL SCREENS */}
+              {role === 'WAREHOUSE_KEEPER' && (
+                <>
+                  {(activeView === 'warehouse-allocation' || activeView === 'role-workspace') && (
                     <WarehouseKeeperView
                       catalog={catalog}
                       orders={orders}
                       onRefresh={fetchData}
                     />
                   )}
-                  {currentUser?.role === 'STATION_OPERATOR' && (
+                  {activeView === 'inventory' && (
+                    <InventoryTab catalog={catalog} />
+                  )}
+                </>
+              )}
+
+              {/* STATION OPERATOR FUNCTIONAL SCREENS */}
+              {role === 'STATION_OPERATOR' && (
+                <>
+                  {(activeView === 'operator-terminal' || activeView === 'role-workspace') && (
                     <StationOperatorView orders={orders} onRefresh={fetchData} />
                   )}
-                  {currentUser?.role === 'QC_INSPECTOR' && (
+                  {activeView === 'worklist' && (
+                    <WorklistTab
+                      orders={orders}
+                      currentRole={role}
+                      onRefresh={fetchData}
+                    />
+                  )}
+                  {activeView === 'operator-cutting' && (
+                    <StationOperatorView orders={orders} onRefresh={fetchData} initialStation="CUTTING" />
+                  )}
+                  {activeView === 'operator-sewing' && (
+                    <StationOperatorView orders={orders} onRefresh={fetchData} initialStation="SEWING" />
+                  )}
+                  {activeView === 'operator-wash' && (
+                    <StationOperatorView orders={orders} onRefresh={fetchData} initialStation="WASH" />
+                  )}
+                  {activeView === 'operator-finishing' && (
+                    <StationOperatorView orders={orders} onRefresh={fetchData} initialStation="FINISHING" />
+                  )}
+                </>
+              )}
+
+              {/* QC INSPECTOR FUNCTIONAL SCREENS */}
+              {role === 'QC_INSPECTOR' && (
+                <>
+                  {(activeView === 'qc-dashboard' || activeView === 'role-workspace') && (
                     <QCInspectorView
                       orders={orders}
                       catalog={catalog}
                       onRefresh={fetchData}
+                      initialResult="PASS"
                     />
                   )}
-                  {currentUser?.role === 'MANAGER' && <ManagerView orders={orders} />}
+                  {activeView === 'qc' && (
+                    <QcTab
+                      orders={orders}
+                      catalog={catalog}
+                      currentRole={role}
+                      onRefresh={fetchData}
+                    />
+                  )}
+                  {activeView === 'qc-rework' && (
+                    <QCInspectorView
+                      orders={orders}
+                      catalog={catalog}
+                      onRefresh={fetchData}
+                      initialResult="REWORK"
+                    />
+                  )}
+                  {activeView === 'pe-qc-profiles' && (
+                    <ProcessEngineerView
+                      workflowData={workflowData}
+                      catalog={catalog}
+                      onRefresh={fetchData}
+                      initialTab="qcProfiles"
+                    />
+                  )}
                 </>
               )}
 
-              {/* GLOBAL SUB-VIEWS */}
+              {/* MANAGER FUNCTIONAL SCREENS */}
+              {role === 'MANAGER' && (
+                <>
+                  {(activeView === 'manager-wip' ||
+                    activeView === 'manager-bottleneck' ||
+                    activeView === 'manager-analytics' ||
+                    activeView === 'role-workspace') && (
+                    <ManagerView orders={orders} />
+                  )}
+                  {activeView === 'audit' && (
+                    <AuditTab auditLogs={auditLogs} />
+                  )}
+                </>
+              )}
+
+              {/* GLOBAL LOOKUPS PERMITTED BY ROLE */}
               {activeView === 'orders' && (
                 <OrdersTab
                   orders={orders}
                   catalog={catalog}
-                  currentRole={currentUser?.role || 'PRODUCTION_PLANNER'}
+                  currentRole={role}
                   onRefresh={fetchData}
                 />
               )}
-              {activeView === 'workflow' && <WorkflowTab workflowData={workflowData} />}
-              {activeView === 'worklist' && (
-                <WorklistTab
-                  orders={orders}
-                  currentRole={currentUser?.role || 'STATION_OPERATOR'}
-                  onRefresh={fetchData}
-                />
+              {activeView === 'workflow' && (
+                <WorkflowTab workflowData={workflowData} />
               )}
-              {activeView === 'qc' && (
-                <QcTab
-                  orders={orders}
-                  catalog={catalog}
-                  currentRole={currentUser?.role || 'QC_INSPECTOR'}
-                  onRefresh={fetchData}
-                />
-              )}
-              {activeView === 'inventory' && <InventoryTab catalog={catalog} />}
-              {activeView === 'audit' && <AuditTab auditLogs={auditLogs} />}
             </div>
           )}
         </main>

@@ -10,17 +10,23 @@ interface ProcessEngineerViewProps {
   workflowData: any;
   catalog: any;
   onRefresh: () => void;
+  initialTab?: 'designer' | 'qcProfiles' | 'customReview';
 }
 
 export const ProcessEngineerView: React.FC<ProcessEngineerViewProps> = ({
   workflowData,
   catalog,
   onRefresh,
+  initialTab,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const version: WorkflowVersion = workflowData?.versions?.[0];
 
-  const [activeTab, setActiveTab] = useState<'designer' | 'qcProfiles' | 'customReview'>('designer');
+  const [activeTab, setActiveTab] = useState<'designer' | 'qcProfiles' | 'customReview'>(initialTab || 'designer');
+
+  React.useEffect(() => {
+    if (initialTab) setActiveTab(initialTab);
+  }, [initialTab]);
   const [selectedStep, setSelectedStep] = useState<StepDefinition | null>(null);
   const [validationResult, setValidationResult] = useState<{ valid: boolean; message: string } | null>(null);
   const [qcProfiles, setQcProfiles] = useState<QCProfile[]>(catalog?.qcProfiles || []);

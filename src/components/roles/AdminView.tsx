@@ -10,11 +10,21 @@ interface AdminViewProps {
   catalog: any;
   auditLogs: any[];
   onRefresh: () => void;
+  initialSubTab?: 'matrix' | 'users' | 'audit';
 }
 
-export const AdminView: React.FC<AdminViewProps> = ({ catalog, auditLogs, onRefresh }) => {
+export const AdminView: React.FC<AdminViewProps> = ({
+  catalog,
+  auditLogs,
+  onRefresh,
+  initialSubTab,
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [activeSubTab, setActiveSubTab] = useState<'matrix' | 'users' | 'audit'>('matrix');
+  const [activeSubTab, setActiveSubTab] = useState<'matrix' | 'users' | 'audit'>(initialSubTab || 'matrix');
+
+  React.useEffect(() => {
+    if (initialSubTab) setActiveSubTab(initialSubTab);
+  }, [initialSubTab]);
   const [matrixRules, setMatrixRules] = useState<FabricColorRule[]>(catalog?.fabricColorRules || []);
   const [savingRuleId, setSavingRuleId] = useState<string | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
