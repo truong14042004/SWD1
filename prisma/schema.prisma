@@ -1,0 +1,427 @@
+// DenimFlow BO - PostgreSQL Database Schema
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  ADMIN
+  PROCESS_ENGINEER
+  PRODUCTION_PLANNER
+  WAREHOUSE_KEEPER
+  STATION_OPERATOR
+  QC_INSPECTOR
+  MANAGER
+}
+
+enum StationType {
+  CUTTING
+  SEWING
+  EMBROIDERY
+  DYEING
+  WASH
+  FINISHING
+  QC
+  PACKING
+}
+
+enum StretchType {
+  RIGID
+  STRETCH
+}
+
+enum StepType {
+  SELECTION
+  MATERIAL
+  PRODUCTION
+  QC
+  APPROVAL
+}
+
+enum OrderStatus {
+  DRAFT
+  CONFIRMED
+  IN_PRODUCTION
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+}
+
+enum StepStatus {
+  PENDING
+  READY
+  IN_PROGRESS
+  WAITING_QC
+  DONE
+  REWORK
+  SKIPPED
+}
+
+enum WorkflowVersionStatus {
+  DRAFT
+  PUBLISHED
+  RETIRED
+}
+
+enum QCProfileType {
+  FULL_PROCESS
+  SKIP_CLEAN_WASH
+}
+
+enum QCResult {
+  PASS
+  REWORK
+  REJECT
+}
+
+enum DyeMode {
+  TOTAL
+  PARTIAL
+}
+
+enum DyeSource {
+  INTERNAL
+  OUTSOURCED
+}
+
+enum TransitionKind {
+  NORMAL
+  REWORK
+}
+
+model User {
+  id           String    @id @default(uuid())
+  fullName     String
+  email        String    @unique
+  passwordHash String?
+  role         UserRole
+  stationId    String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Station {
+  id           String      @id @default(uuid())
+  name         String
+  stationType  StationType
+  isOutsourced Boolean     @default(false)
+  createdAt    DateTime    @default(now())
+}
+
+model Style {
+  id                String      @id @default(uuid())
+  styleCode         String      @unique
+  name              String
+  fitType           String
+  defaultTemplateId String?
+  qcProfiles        QCProfile[]
+  orders            ProductionOrder[]
+  createdAt         DateTime    @default(now())
+}
+
+model FabricType {
+  id          String      @id @default(uuid())
+  code        String      @unique
+  weightOz    Float
+  composition String
+  stretchType StretchType
+  lots        FabricLot[]
+  rules       FabricColorRule[]
+  orders      ProductionOrder[]
+  createdAt   DateTime    @default(now())
+}
+
+model ColorOption {
+  id          String      @id @default(uuid())
+  code        String      @unique
+  name        String
+  colorFamily String
+  lots        FabricLot[]
+  rules       FabricColorRule[]
+  orders      ProductionOrder[]
+  createdAt   DateTime    @default(now())
+}
+
+model FabricColorRule {
+  id           String     @id @default(uuid())
+  fabricTypeId String
+  colorId      String
+  isAllowed    Boolean    @default(true)
+
+  fabricType   FabricType  @relation(fields: [fabricTypeId], references: [id], onDelete: Cascade)
+  color        ColorOption @relation(fields: [colorId], references: [id], onDelete: Cascade)
+
+  @@unique([fabricTypeId, colorId])
+}
+
+model FabricLot {
+  id               String     @id @default(uuid())
+  fabricTypeId     String
+  colorId          String
+  lotNo            String     @unique
+  availableMeters  Float
+  shrinkagePercent Float
+  createdAt        DateTime   @default(now())
+
+  fabricType       FabricType  @relation(fields: [fabricTypeId], references: [id])
+  color            ColorOption @relation(fields: [colorId], references: [id])
+  allocations      MaterialAllocation[]
+}
+
+model QCProfile {
+  id                  String        @id @default(uuid())
+  styleId             String
+  profileType         QCProfileType
+  maxShrinkagePercent Float
+  maxColorFadingLevel Float
+  isActive            Boolean       @default(true)
+  style               Style         @relation(fields: [styleId], references: [id], onDelete: Cascade)
+  orders              ProductionOrder[]
+  acknowledgements    CustomerAcknowledgement[]
+
+  @@unique([styleId, profileType])
+}
+
+model WorkflowTemplate {
+  id               String            @id @default(uuid())
+  name             String
+  status           String            @default("ACTIVE")
+  currentVersionId String?
+  versions         WorkflowVersion[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model WorkflowVersion {
+  id          String                @id @default(uuid())
+  templateId  String
+  versionNo   Int
+  status      WorkflowVersionStatus @default(DRAFT)
+  publishedAt DateTime?
+  template    WorkflowTemplate      @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  steps       StepDefinition[]
+  transitions StepTransition[]
+  instances   WorkflowInstance[]
+  createdAt   DateTime              @default(now())
+
+  @@unique([templateId, versionNo])
+}
+
+model StepDefinition {
+  id               String          @id @default(uuid())
+  versionId        String
+  code             String
+  name             String
+  stepType         StepType
+  stationType      StationType
+  isMandatory      Boolean         @default(true)
+  requiresEvidence Boolean         @default(false)
+  conditionExpr    String?
+  maxRework        Int             @default(3)
+  sequenceOrder    Int             @default(0)
+  version          WorkflowVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+
+  @@unique([versionId, code])
+}
+
+model StepTransition {
+  id            String          @id @default(uuid())
+  versionId     String
+  fromStepCode  String
+  toStepCode    String
+  conditionExpr String?
+  kind          TransitionKind  @default(NORMAL)
+  version       WorkflowVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+}
+
+model ProductionOrder {
+  id            String          @id @default(uuid())
+  orderNumber   String          @unique
+  styleId       String
+  fabricTypeId  String
+  colorId       String
+  washType      String          @default("NONE")
+  dyeRequired   Boolean         @default(false)
+  dyeMode       DyeMode         @default(TOTAL)
+  dyeSource     DyeSource       @default(INTERNAL)
+  skipCleanWash Boolean         @default(false)
+  qcProfileId   String?
+  isCustom      Boolean         @default(false)
+  status        OrderStatus     @default(DRAFT)
+  dueDate       DateTime
+  createdBy     String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  style         Style           @relation(fields: [styleId], references: [id])
+  fabricType    FabricType      @relation(fields: [fabricTypeId], references: [id])
+  color         ColorOption     @relation(fields: [colorId], references: [id])
+  qcProfile     QCProfile?      @relation(fields: [qcProfileId], references: [id])
+
+  sizeLines     OrderSizeLine[]
+  bomLines      BomLine[]
+  instance      WorkflowInstance?
+  acknowledgement CustomerAcknowledgement?
+  bundles       Bundle[]
+}
+
+model CustomerAcknowledgement {
+  id             String          @id @default(uuid())
+  orderId        String          @unique
+  ackType        String          @default("SKIP_CLEAN_WASH")
+  qcProfileId    String
+  fileUrl        String
+  acknowledgedBy String
+  acknowledgedAt DateTime        @default(now())
+  recordedBy     String
+
+  order          ProductionOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  qcProfile      QCProfile       @relation(fields: [qcProfileId], references: [id])
+}
+
+model OrderSizeLine {
+  id           String          @id @default(uuid())
+  orderId      String
+  size         String
+  plannedQty   Int
+  actualCutQty Int             @default(0)
+  order        ProductionOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@unique([orderId, size])
+}
+
+model BomLine {
+  id           String               @id @default(uuid())
+  orderId      String
+  materialType String
+  requiredQty  Float
+  unit         String
+  order        ProductionOrder      @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  allocations  MaterialAllocation[]
+}
+
+model MaterialAllocation {
+  id           String    @id @default(uuid())
+  bomLineId    String
+  fabricLotId  String
+  allocatedQty Float
+  bomLine      BomLine   @relation(fields: [bomLineId], references: [id], onDelete: Cascade)
+  fabricLot    FabricLot @relation(fields: [fabricLotId], references: [id])
+}
+
+model WorkflowInstance {
+  id            String                 @id @default(uuid())
+  orderId       String                 @unique
+  versionId     String
+  status        String                 @default("ACTIVE")
+  order         ProductionOrder        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  version       WorkflowVersion        @relation(fields: [versionId], references: [id])
+  stepInstances StepInstance[]
+  requests      WorkflowChangeRequest[]
+  createdAt     DateTime               @default(now())
+}
+
+model StepInstance {
+  id               String         @id @default(uuid())
+  instanceId       String
+  stepCode         String
+  name             String
+  stepType         StepType
+  stationType      StationType
+  isMandatory      Boolean        @default(true)
+  requiresEvidence Boolean        @default(false)
+  status           StepStatus     @default(PENDING)
+  assignedTo       String?
+  startedAt        DateTime?
+  completedAt      DateTime?
+  qtyIn            Int            @default(0)
+  qtyGood          Int            @default(0)
+  qtyDefect        Int            @default(0)
+  reworkCount      Int            @default(0)
+
+  instance         WorkflowInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  evidences        Evidence[]
+  inspections      QCInspection[]
+
+  @@unique([instanceId, stepCode])
+}
+
+model Evidence {
+  id             String       @id @default(uuid())
+  stepInstanceId String
+  fileUrl        String
+  note           String?
+  uploadedBy     String
+  uploadedAt     DateTime     @default(now())
+  stepInstance   StepInstance @relation(fields: [stepInstanceId], references: [id], onDelete: Cascade)
+}
+
+model Bundle {
+  id              String          @id @default(uuid())
+  orderId         String
+  bundleCode      String          @unique
+  size            String
+  qty             Int
+  currentStepCode String
+  order           ProductionOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  defects         Defect[]
+}
+
+model QCInspection {
+  id                      String       @id @default(uuid())
+  stepInstanceId          String
+  inspectorId             String
+  qcProfileId             String
+  sampleSize              Int
+  result                  QCResult
+  targetStepCodeForRework String?
+  shrinkageMeasured       Float?
+  fadingLevelMeasured     Float?
+  notes                   String?
+  inspectedAt             DateTime     @default(now())
+
+  stepInstance            StepInstance @relation(fields: [stepInstanceId], references: [id], onDelete: Cascade)
+  defects                 Defect[]
+}
+
+model Defect {
+  id           String        @id @default(uuid())
+  inspectionId String
+  bundleId     String?
+  defectType   String
+  qty          Int
+  inspection   QCInspection  @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+  bundle       Bundle?       @relation(fields: [bundleId], references: [id])
+}
+
+model WorkflowChangeRequest {
+  id          String           @id @default(uuid())
+  instanceId  String
+  orderId     String
+  requestedBy String
+  action      String
+  stepCode    String
+  reason      String
+  status      String           @default("PENDING")
+  approvedBy  String?
+  reviewedAt  DateTime?
+  createdAt   DateTime         @default(now())
+  instance    WorkflowInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  entityType String
+  entityId   String
+  action     String
+  oldValue   String?
+  newValue   String?
+  actorId    String
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId])
+}
