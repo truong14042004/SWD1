@@ -6,6 +6,7 @@ import { useGSAP } from '@gsap/react';
 import { animateFadeIn } from '@/lib/animations';
 import { Header } from '@/components/Header';
 import { Sidebar, MainViewType } from '@/components/Sidebar';
+import { AuthPortal } from '@/components/auth/AuthPortal';
 
 // Dedicated Role Workspaces
 import { AdminView } from '@/components/roles/AdminView';
@@ -25,7 +26,7 @@ import { InventoryTab } from '@/components/tabs/InventoryTab';
 import { AuditTab } from '@/components/tabs/AuditTab';
 
 function AppContent() {
-  const { currentUser, isAuthenticated } = useAuth();
+  const { currentUser, isAuthenticated, isReady } = useAuth();
   const [activeView, setActiveView] = useState<MainViewType>('role-workspace');
   const [orders, setOrders] = useState<any[]>([]);
   const [catalog, setCatalog] = useState<any>(null);
@@ -44,10 +45,10 @@ function AppContent() {
         fetch('/api/audit').then((r) => r.json()),
       ]);
 
-      if (ordersRes.success) setOrders(ordersRes.data);
-      if (catalogRes.success) setCatalog(catalogRes.data);
-      if (wfRes.success) setWorkflowData(wfRes.data);
-      if (auditRes.success) setAuditLogs(auditRes.data);
+      if (ordersRes?.success) setOrders(ordersRes.data || []);
+      if (catalogRes?.success) setCatalog(catalogRes.data);
+      if (wfRes?.success) setWorkflowData(wfRes.data);
+      if (auditRes?.success) setAuditLogs(auditRes.data || []);
     } catch (err) {
       console.error('Fetch error:', err);
     } finally {
@@ -56,8 +57,10 @@ function AppContent() {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (isAuthenticated) {
+      fetchData();
+    }
+  }, [isAuthenticated]);
 
   // GSAP animation when switching views or roles
   useGSAP(
@@ -68,6 +71,23 @@ function AppContent() {
     },
     { scope: mainContentRef, dependencies: [activeView, currentUser?.role] }
   );
+
+  // Still checking localStorage
+  if (!isReady) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="flex items-center space-x-3 text-slate-500 font-semibold text-sm">
+          <span className="w-5 h-5 border-2 border-denim-600 border-t-transparent rounded-full animate-spin"></span>
+          <span>Khởi tạo hệ thống DenimFlow...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Not authenticated -> Display Auth Portal with 7 role account cards & login/register
+  if (!isAuthenticated || !currentUser) {
+    return <AuthPortal />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">

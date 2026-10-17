@@ -26,6 +26,7 @@ interface RegisterData {
 interface AuthContextType {
   currentUser: User | null;
   isAuthenticated: boolean;
+  isReady: boolean;
   allUsers: User[];
   login: (email: string, password?: string) => Promise<{ success: boolean; error?: string }>;
   register: (data: RegisterData) => Promise<{ success: boolean; error?: string }>;
@@ -58,14 +59,21 @@ const ROLE_PERMISSIONS: Record<UserRole, PermissionAction[]> = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(INITIAL_USERS[2]); // Default planner
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isReady, setIsReady] = useState(false);
   const [allUsers, setAllUsers] = useState<User[]>(INITIAL_USERS);
 
   useEffect(() => {
-    const savedUserId = localStorage.getItem('denimflow_active_user_id');
-    if (savedUserId) {
-      const found = allUsers.find((u) => u.id === savedUserId);
-      if (found) setCurrentUser(found);
+    try {
+      const savedUserId = localStorage.getItem('denimflow_active_user_id');
+      if (savedUserId) {
+        const found = allUsers.find((u) => u.id === savedUserId);
+        if (found) setCurrentUser(found);
+      }
+    } catch {
+      // LocalStorage access might fail in private browsing
+    } finally {
+      setIsReady(true);
     }
   }, [allUsers]);
 
@@ -143,6 +151,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         currentUser,
         isAuthenticated: !!currentUser,
+        isReady,
         allUsers,
         login,
         register,
